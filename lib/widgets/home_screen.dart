@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:practice_ui/widgets/option.dart';
+import 'package:practice_ui/widgets/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -16,6 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _currentIndex = index;
     });
   }
+
+  final _options = ["All", "Unread 99+", "Favorites 12", "Groups 14", "+"];
 
   final chart = [
     {
@@ -149,6 +153,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ],
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(child: SearchBarContainer()),
+            ),
+
+            SizedBox(height: 20),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: _options.length,
+                itemBuilder: (context, index) {
+                  return Option(
+                    title: _options[index],
+                    bgColor: index == 0
+                        ? const Color(0xffD8FDD2)
+                        : Colors.white,
+                    textColor: index == 0 ? Colors.green : Colors.black87,
+                  );
+                },
               ),
             ),
           ],
