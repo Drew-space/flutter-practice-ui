@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:practice_ui/widgets/message_container.dart';
-import 'package:practice_ui/widgets/option.dart';
-import 'package:practice_ui/widgets/search_bar.dart';
+import 'package:practice_ui/apps/whatsapp/message_container.dart';
+
+import 'package:practice_ui/apps/whatsapp/nav_control.dart';
+import 'package:practice_ui/apps/whatsapp/option.dart';
+import 'package:practice_ui/apps/whatsapp/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -12,14 +14,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-
-  void _changeIndex(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
   final _options = ["All", "Unread 99+", "Favorites 12", "Groups 14", "+"];
   final chart = [
     {
@@ -139,35 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: HugeIcon(
           icon: HugeIcons.strokeRoundedBubbleChatAdd,
           color: Colors.white,
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.only(top: 20),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _changeIndex,
-          selectedItemColor: Color(0xff25D366),
-          unselectedItemColor: Colors.black87,
-          backgroundColor: Colors.white,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              label: "Chats",
-              icon: HugeIcon(icon: HugeIcons.strokeRoundedMessage01),
-            ),
-            BottomNavigationBarItem(
-              label: "Updates",
-              icon: HugeIcon(icon: HugeIcons.strokeRoundedSolarSystem01),
-            ),
-            BottomNavigationBarItem(
-              label: "Communities",
-              icon: HugeIcon(icon: HugeIcons.strokeRoundedUserGroup),
-            ),
-            BottomNavigationBarItem(
-              label: "Calls",
-              icon: HugeIcon(icon: HugeIcons.strokeRoundedCall),
-            ),
-          ],
         ),
       ),
 
