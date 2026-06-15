@@ -21,7 +21,7 @@ class _FeaturedHouseCarouselState extends State<FeaturedHouseCarousel> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 360,
+      height: 250,
       child: CarouselView.weighted(
         controller: controller,
         itemSnapping: true,

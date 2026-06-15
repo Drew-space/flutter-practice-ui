@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:practice_ui/apps/real-estate/utils/featured_house_carousel.dart';
 import 'package:practice_ui/apps/real-estate/utils/real_searchbar.dart';
 import 'package:practice_ui/apps/real-estate/utils/real_userprofile_row.dart';
+import 'package:practice_ui/apps/real-estate/utils/recommendation.dart';
 
 class RealHomeScreen extends StatelessWidget {
   const RealHomeScreen({super.key});
@@ -27,25 +28,33 @@ class RealHomeScreen extends StatelessWidget {
                     const RealSearchbar(),
 
                     const SizedBox(height: 30),
-
                     Row(
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            "Featured Houses",
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Featured",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text(
+                            "See All",
                             style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue,
                             ),
                           ),
                         ),
-                        Text("See all", style: TextStyle(color: Colors.blue)),
                       ],
                     ),
+                    const FeaturedHouseCarousel(),
 
                     const SizedBox(height: 20),
 
-                    const FeaturedHouseCarousel(),
+                    Recommendation(),
 
                     const SizedBox(height: 40),
                   ],
