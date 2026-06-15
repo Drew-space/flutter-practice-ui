@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:practice_ui/apps/real-estate/pages/real_home_screen.dart';
+import 'package:practice_ui/apps/real-estate/utils/real_navbar.dart';
 
 class RealExplore extends StatelessWidget {
   const RealExplore({super.key});
@@ -26,14 +28,24 @@ class PropertySearchScreen extends StatelessWidget {
               /// HEADER
               Row(
                 children: [
-                  Container(
-                    height: 42,
-                    width: 42,
-                    decoration: BoxDecoration(
-                      color: const Color(0xffEEF2F6),
-                      borderRadius: BorderRadius.circular(50),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RealNavbar(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 42,
+                      width: 42,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffEEF2F6),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: const Icon(Icons.arrow_back),
                     ),
-                    child: const Icon(Icons.arrow_back),
                   ),
 
                   const Expanded(
@@ -298,7 +310,7 @@ class HouseCard extends StatelessWidget {
                   fontSize: 18,
                 ),
               ),
-              Icon(Icons.favorite_border, color: Colors.grey.shade500),
+              HugeIcon(icon: HugeIcons.strokeRoundedFavourite),
             ],
           ),
         ],

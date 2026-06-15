@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class Recommendation extends StatelessWidget {
   const Recommendation({super.key});
@@ -198,7 +199,7 @@ class Recommendation extends StatelessWidget {
                           fontSize: 18,
                         ),
                       ),
-                      Icon(Icons.favorite_border, color: Colors.grey.shade500),
+                      HugeIcon(icon: HugeIcons.strokeRoundedFavourite),
                     ],
                   ),
                 ],
