@@ -19,7 +19,7 @@ class RealSearchbar extends StatelessWidget {
               size: 20,
             ),
           ),
-        ),
+        ), 
         hintText: "Search...",
         hintStyle: TextStyle(
           fontSize: 18,

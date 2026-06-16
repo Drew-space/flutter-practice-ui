@@ -25,7 +25,6 @@ class PropertySearchScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
             children: [
-              /// HEADER
               Row(
                 children: [
                   GestureDetector(
