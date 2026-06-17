@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice_ui/apps/real-estate/pages/real_explore.dart';
 import 'package:practice_ui/apps/real-estate/utils/featured_house_carousel.dart';
 import 'package:practice_ui/apps/real-estate/utils/real_searchbar.dart';
 import 'package:practice_ui/apps/real-estate/utils/real_userprofile_row.dart';
@@ -39,7 +40,14 @@ class RealHomeScreen extends StatelessWidget {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RealExplore(),
+                              ),
+                            );
+                          },
                           child: const Text(
                             "See All",
                             style: TextStyle(

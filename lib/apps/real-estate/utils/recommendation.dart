@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:practice_ui/apps/real-estate/pages/real_explore.dart';
 
 class Recommendation extends StatelessWidget {
   const Recommendation({super.key});
@@ -47,7 +48,12 @@ class Recommendation extends StatelessWidget {
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RealExplore()),
+                );
+              },
               child: const Text(
                 "See All",
                 style: TextStyle(

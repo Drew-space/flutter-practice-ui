@@ -193,6 +193,7 @@ class RecommendationGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       itemCount: houses.length,
+
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 14,
