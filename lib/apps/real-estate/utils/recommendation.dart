@@ -44,7 +44,7 @@ class Recommendation extends StatelessWidget {
           children: [
             const Text(
               "Our Recommendation",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
             ),
             TextButton(
               onPressed: () {},
