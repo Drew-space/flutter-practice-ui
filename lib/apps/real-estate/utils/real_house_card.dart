@@ -76,7 +76,7 @@ class HouseCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: const Text(
-                      "View",
+                      "view",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
