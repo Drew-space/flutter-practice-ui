@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:practice_ui/apps/gadgetapp/gadget_navbar.dart';
+import 'package:practice_ui/apps/gadgetapp/pages/gadget_home_screen.dart';
 import 'package:practice_ui/apps/naija.dart';
 import 'package:practice_ui/apps/real-estate/utils/real_navbar.dart';
 import 'package:practice_ui/apps/whatsapp/home_screen.dart';
@@ -13,9 +15,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: true,
-      home: HomeFeedScreen(),
-    );
+    return MaterialApp(debugShowCheckedModeBanner: true, home: GadgetNavbar());
   }
 }
