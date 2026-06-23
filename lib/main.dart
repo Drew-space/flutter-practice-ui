@@ -15,6 +15,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: true, home: GadgetNavbar());
+    return MaterialApp(
+      debugShowCheckedModeBanner: true,
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        // ...rest of your theme
+      ),
+      home: GadgetNavbar(),
+    );
   }
 }
