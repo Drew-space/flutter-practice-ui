@@ -774,6 +774,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:practice_ui/apps/gadgetapp/pages/gadget_shop_screen.dart';
+import 'package:practice_ui/apps/gadgetapp/utils/cart_manager.dart';
+import 'package:practice_ui/apps/gadgetapp/utils/cart_success_sheet.dart';
 import 'package:practice_ui/apps/gadgetapp/utils/product.dart';
 
 /// Product Detail Screen
@@ -794,6 +797,9 @@ import 'package:practice_ui/apps/gadgetapp/utils/product.dart';
 ///   plain description paragraph.
 /// - No color selector, no size selector.
 /// - Bottom bar: "Add to cart" (outlined) + "Buy Now" (filled black).
+/// - Tapping "Add to cart" adds the product to [CartManager] and
+///   shows a bounce-in success sheet with "Continue Shopping" /
+///   "View Cart" actions (CartSuccessSheet).
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
 
@@ -817,6 +823,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ...widget.product.images.where((img) => img != widget.product.imageUrl),
     ];
     _selectedImage = _images.first;
+  }
+
+  void _handleAddToCart() {
+    // NOTE: assumes CartManager exposes a static `add(Product)` method,
+    // matching the existing `increment` / `decrement` / `remove` API
+    // seen in GadgetShopScreen. Rename this call if your method is
+    // named differently (e.g. CartManager.addItem, CartManager.addToCart).
+    CartManager.add(widget.product);
+
+    CartSuccessSheet.show(
+      context,
+      onViewCart: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const GadgetShopScreen()),
+        );
+      },
+      // onContinueShopping left null — sheet just dismisses and the
+      // user stays on this product page.
+    );
   }
 
   @override
@@ -1035,7 +1061,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       ),
       bottomNavigationBar: _BottomActionBar(
-        onAddToCart: () {},
+        onAddToCart: _handleAddToCart,
         onBuyNow: () {},
       ),
     );
