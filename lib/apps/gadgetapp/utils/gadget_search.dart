@@ -43,7 +43,7 @@ class GadgetSearch extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(9),
           decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFFF8A00), width: 1.5),
+            border: Border.all(color: const Color(0xFFEC7018), width: 1.5),
             borderRadius: BorderRadius.circular(12),
           ),
           child: const HugeIcon(

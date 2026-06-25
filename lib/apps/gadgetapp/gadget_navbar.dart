@@ -14,7 +14,7 @@ class GadgetNavbar extends StatefulWidget {
 
 class _GadgetNavbarState extends State<GadgetNavbar> {
   int _currentIndex = 0;
-  static const Color _active = Color(0xFFFF8A00);
+  static const Color _active = Color(0xFFEC7018);
   static const Color _inactive = Color(0xFF9A9A9A);
 
   void _changeIndex(int index) {
