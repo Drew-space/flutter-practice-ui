@@ -1,41 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/real-estate/pages/real_explore.dart';
+import 'package:practice_ui/apps/real-estate/provider/house_provider.dart';
 
-class Recommendation extends StatelessWidget {
-  const Recommendation({super.key});
+class Recommendation extends ConsumerWidget {
+  Recommendation({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final categories = ["All", "House", "Villa", "Apartments", "Office"];
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final categories = ["All", "House", "Villa", "Apartments", "Office"];
 
-    final houses = [
-      {
-        "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
-        "title": "La Grand Maison",
-        "location": "Tokyo, Japan",
-        "price": "\$1224",
-      },
-      {
-        "image": "https://images.unsplash.com/photo-1484154218962-a197022b5858",
-        "title": "La Grand Maison",
-        "location": "Tokyo, Japan",
-        "price": "\$1424",
-      },
-      {
-        "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f",
-        "title": "La Grand Maison",
-        "location": "Tokyo, Japan",
-        "price": "\$17821",
-      },
-      {
-        "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-        "title": "La Grand Maison",
-        "location": "Tokyo, Japan",
-        "price": "\$21469",
-      },
-    ];
-
+    // final houses = [
+    //   {
+    //     "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+    //     "title": "La Grand Maison",
+    //     "location": "Tokyo, Japan",
+    //     "price": "\$1224",
+    //   },
+    //   {
+    //     "image": "https://images.unsplash.com/photo-1484154218962-a197022b5858",
+    //     "title": "La Grand Maison",
+    //     "location": "Tokyo, Japan",
+    //     "price": "\$1424",
+    //   },
+    //   {
+    //     "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f",
+    //     "title": "La Grand Maison",
+    //     "location": "Tokyo, Japan",
+    //     "price": "\$17821",
+    //   },
+    //   {
+    //     "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+    //     "title": "La Grand Maison",
+    //     "location": "Tokyo, Japan",
+    //     "price": "\$21469",
+    //   },
+    // ];
+    final categories = ref.watch(categoriesProvider);
+    final houses = ref.watch(filteredHousesProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -75,22 +79,28 @@ class Recommendation extends StatelessWidget {
             itemCount: categories.length,
             separatorBuilder: (_, __) => const SizedBox(width: 10),
             itemBuilder: (context, index) {
-              final isSelected = index == 0;
+              final category = categories[index];
+              final isSelected = selectedCategory == category;
 
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.blue : const Color(0xffEEF2F6),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Text(
-                  categories[index],
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black87,
-                    fontWeight: FontWeight.w500,
+              return GestureDetector(
+                onTap: () {
+                  ref.read(selectedCategoryProvider.notifier).state = category;
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.blue : const Color(0xffEEF2F6),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Text(
+                    categories[index],
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black87,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/real-estate/pages/real_explore.dart';
+import 'package:practice_ui/apps/real-estate/pages/real_favourite.dart';
 import 'package:practice_ui/apps/real-estate/pages/real_home_screen.dart';
 import 'package:practice_ui/apps/real-estate/pages/real_profile.dart';
 
@@ -26,6 +27,7 @@ class _RealNavbarState extends State<RealNavbar> {
   final List<Widget> _pages = [
     const RealHomeScreen(),
     const RealExplore(),
+    const RealFavourite(),
     const RealProfile(),
   ];
 
@@ -80,10 +82,20 @@ class _RealNavbarState extends State<RealNavbar> {
             ),
 
             GButton(
+              icon: Icons.search,
+              leading: HugeIcon(
+                icon: HugeIcons.strokeRoundedFavourite,
+                color: _selectedIndex == 2 ? primaryBlue : Colors.grey.shade500,
+                size: 24,
+              ),
+              text: 'Favourite',
+            ),
+
+            GButton(
               icon: Icons.person,
               leading: HugeIcon(
                 icon: HugeIcons.strokeRoundedUser,
-                color: _selectedIndex == 2 ? primaryBlue : Colors.grey.shade500,
+                color: _selectedIndex == 3 ? primaryBlue : Colors.grey.shade500,
                 size: 24,
               ),
               text: 'Profile',
