@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/real-estate/pages/real_home_screen.dart';
 import 'package:practice_ui/apps/real-estate/utils/real_navbar.dart';
+import 'package:practice_ui/apps/real-estate/utils/real_explore_search_bar.dart';
+import 'package:practice_ui/apps/real-estate/utils/real_explore_recommendation_grid.dart';
 
 class RealExplore extends StatelessWidget {
   const RealExplore({super.key});
@@ -21,120 +23,62 @@ class PropertySearchScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xffF8F8F8),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RealNavbar(),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RealNavbar(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 42,
+                        width: 42,
+                        decoration: BoxDecoration(
+                          color: const Color(0xffEEF2F6),
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                      );
-                    },
-                    child: Container(
-                      height: 42,
-                      width: 42,
-                      decoration: BoxDecoration(
-                        color: const Color(0xffEEF2F6),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: const Icon(Icons.arrow_back),
-                    ),
-                  ),
-
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        "Search for Your Ideal Home",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
+                        child: const Icon(Icons.arrow_back),
                       ),
                     ),
-                  ),
 
-                  const NotificationIcon(),
-                ],
-              ),
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          "Search for Your Ideal Home",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
 
-              const SizedBox(height: 20),
-
-              /// SEARCH
-              Row(children: [const Expanded(child: SearchBarWidget())]),
-
-              const SizedBox(height: 20),
-
-              /// FILTERS
-              SizedBox(
-                height: 42,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: const [
-                    FilterChipWidget(title: "All", selected: true),
-                    FilterChipWidget(title: "House"),
-                    FilterChipWidget(title: "Villa"),
-                    FilterChipWidget(title: "Apartments"),
-                    FilterChipWidget(title: "Office"),
+                    const NotificationIcon(),
                   ],
                 ),
-              ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
-              /// TITLE
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Found 56 Apartments",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                ),
-              ),
+                /// SEARCH
+                Row(children: [const Expanded(child: RealExploreSearchBar())]),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              /// GRID
-              const Expanded(child: RecommendationGrid()),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// SEARCH BAR (moved from file)
-class SearchBarWidget extends StatelessWidget {
-  const SearchBarWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 54,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: const Row(
-        children: [
-          HugeIcon(icon: HugeIcons.strokeRoundedSearch01),
-          SizedBox(width: 10),
-
-          Expanded(
-            child: Text(
-              "Search houses, villas...",
-              style: TextStyle(color: Colors.grey),
+                /// GRID
+                const RealExploreRecommendationGrid(),
+              ],
             ),
           ),
-
-          HugeIcon(icon: HugeIcons.strokeRoundedFilterHorizontal),
-        ],
+        ),
       ),
     );
   }
@@ -159,186 +103,8 @@ class NotificationIcon extends StatelessWidget {
 }
 
 /// GRID
-class RecommendationGrid extends StatelessWidget {
-  const RecommendationGrid({super.key});
-
-  final List<Map<String, String>> houses = const [
-    {
-      "image":
-          "https://media.vrbo.com/lodging/93000000/92750000/92749300/92749255/78a6905c.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
-      "title": "La Grand Maison",
-      "location": "Tokyo, Japan",
-      "price": "\$1224",
-      "category": "House",
-    },
-    {
-      "image": "https://images.unsplash.com/photo-1484154218962-a197022b5858",
-      "title": "Modern Villa",
-      "location": "Tokyo, Japan",
-      "price": "\$1424",
-      "category": "Villa",
-    },
-    {
-      "image": "https://cdn.furnishedhousing.com/property-images/8242683_R.jpg",
-      "title": "Sky Apartments",
-      "location": "Tokyo, Japan",
-      "price": "\$17821",
-      "category": "Apartments",
-    },
-    {
-      "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-      "title": "Business Office",
-      "location": "Tokyo, Japan",
-      "price": "\$21469",
-      "category": "Office",
-    },
-    {
-      "image":
-          "https://paltonmorgan.com/naresus/2023/02/paramount-4-1280x719.jpg",
-      "title": "Luxury House",
-      "location": "Osaka, Japan",
-      "price": "\$4200",
-      "category": "House",
-    },
-    {
-      "image":
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnc1dXL2P0p4-Th64EBakI4UQc0TWV1TTEpVgawnUBegcb9qeiOKxlIN4&s=10",
-      "title": "Green Villa",
-      "location": "Kyoto, Japan",
-      "price": "\$8500",
-      "category": "Villa",
-    },
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      itemCount: houses.length,
-
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 14,
-        mainAxisSpacing: 18,
-        childAspectRatio: .68,
-      ),
-      itemBuilder: (context, index) {
-        final house = houses[index];
-
-        return HouseCard(
-          image: house["image"]!,
-          title: house["title"]!,
-          location: house["location"]!,
-          price: house["price"]!,
-        );
-      },
-    );
-  }
-}
 
 /// HOUSE CARD
-class HouseCard extends StatelessWidget {
-  final String image;
-  final String title;
-  final String location;
-  final String price;
-
-  const HouseCard({
-    super.key,
-    required this.image,
-    required this.title,
-    required this.location,
-    required this.price,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Image.network(
-                  image,
-                  height: 120,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.orange, size: 14),
-                      SizedBox(width: 4),
-                      Text(
-                        "4.8",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-          ),
-
-          const SizedBox(height: 4),
-
-          Text(
-            location,
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
-          ),
-
-          const Spacer(),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                price,
-                style: const TextStyle(
-                  color: Color(0xff246BFD),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
-                ),
-              ),
-              HugeIcon(icon: HugeIcons.strokeRoundedFavourite),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 /// FILTER CHIP
 class FilterChipWidget extends StatelessWidget {
