@@ -4,6 +4,7 @@ import 'package:practice_ui/apps/gadgetapp/pages/gadget_favourite_screen.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/gadget_home_screen.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/gadget_profile_screen.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/gadget_shop_screen.dart';
+import 'package:flutter/services.dart';
 
 class GadgetNavbar extends StatefulWidget {
   const GadgetNavbar({super.key});
@@ -32,6 +33,14 @@ class _GadgetNavbarState extends State<GadgetNavbar> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
       body: _pages[_currentIndex],
 

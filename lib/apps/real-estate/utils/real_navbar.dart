@@ -5,6 +5,7 @@ import 'package:practice_ui/apps/real-estate/pages/real_explore.dart';
 import 'package:practice_ui/apps/real-estate/pages/real_favourite.dart';
 import 'package:practice_ui/apps/real-estate/pages/real_home_screen.dart';
 import 'package:practice_ui/apps/real-estate/pages/real_profile.dart';
+import 'package:flutter/services.dart';
 
 class RealNavbar extends StatefulWidget {
   const RealNavbar({super.key});
@@ -33,6 +34,14 @@ class _RealNavbarState extends State<RealNavbar> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
       backgroundColor: Colors.white,
       body: _pages[_selectedIndex],

@@ -12,7 +12,7 @@ class GadgetHomeScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.only(right: 15, left: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
 
           child: Stack(
             children: [

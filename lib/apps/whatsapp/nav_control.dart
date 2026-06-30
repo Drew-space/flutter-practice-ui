@@ -4,6 +4,7 @@ import 'package:practice_ui/apps/whatsapp/home_screen.dart';
 import 'package:practice_ui/apps/whatsapp/pages/calls_screen.dart';
 import 'package:practice_ui/apps/whatsapp/pages/communities_screen.dart';
 import 'package:practice_ui/apps/whatsapp/pages/updates_screen.dart';
+import 'package:flutter/services.dart';
 
 class NavControll extends StatefulWidget {
   const NavControll({super.key});
@@ -30,6 +31,14 @@ class _NavControllState extends State<NavControll> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
       body: _pages[_currentIndex],
 
