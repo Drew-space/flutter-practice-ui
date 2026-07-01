@@ -30,6 +30,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart'; // 👈 new import
+import 'package:practice_ui/apps/furniture/pages/furniture_home_screen.dart';
+import 'package:practice_ui/apps/furniture/pages/furniture_navbar.dart';
 import 'package:practice_ui/apps/gadgetapp/gadget_navbar.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/gadget_home_screen.dart';
 import 'package:practice_ui/apps/naija.dart';
@@ -68,7 +70,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         // ...rest of your theme
       ),
-      home: AuthScreen(),
+      home: FurnitureNavbar(),
     );
   }
 }
