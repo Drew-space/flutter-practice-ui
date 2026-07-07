@@ -124,10 +124,10 @@ class CategoryAndArrivalsSection extends StatelessWidget {
 
   final List<String> _options = [
     "All",
-    "Smartphones",
-    "Laptops",
-    "Tablets",
-    "Accessories",
+    "Furniture",
+    "Dishes",
+    "Lighting",
+    "Decor",
   ];
 
   @override
