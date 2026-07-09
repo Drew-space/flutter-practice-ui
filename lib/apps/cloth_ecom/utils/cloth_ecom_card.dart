@@ -5,12 +5,14 @@ class CollectionCardData {
   final String title;
   final String subtitle;
   final Color cardColor;
+  final Color ringColor; // Optional ring color for the first card
   final String imagePath;
 
   const CollectionCardData({
     required this.title,
     required this.subtitle,
     required this.cardColor,
+    required this.ringColor,
     required this.imagePath,
   });
 }
@@ -20,18 +22,21 @@ const List<CollectionCardData> _collectionCards = [
     title: "New Collections\nAvailable",
     subtitle: "50% Discount for the\nfirst transaction.",
     cardColor: Color(0xFFF34000),
+    ringColor: Color(0xFFF76733),
     imagePath: "assets/images/shoe.png",
   ),
   CollectionCardData(
     title: "New Arrivals\nThis Week",
     subtitle: "30% Discount on\nselected jackets.",
     cardColor: Color(0xFF8B7FE8),
+    ringColor: Color(0xFFBC95FF),
     imagePath: "assets/images/sundress2.png",
   ),
   CollectionCardData(
     title: "Limited Edition\nBags",
     subtitle: "Free shipping on\nyour first order.",
     cardColor: Color(0xFF34B653),
+    ringColor: Color(0xFF6FCF97),
     imagePath: "assets/images/hoodie.png",
   ),
 ];
@@ -113,76 +118,107 @@ class _CollectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: data.cardColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned(
-            right: 5,
-            bottom: -10,
-            child: Image.asset(
-              data.imagePath,
-              height: 130, // was 150 — a bit smaller to match the tighter card
-              fit: BoxFit.contain,
+      // No padding here anymore — this is what was clipping the rings.
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          clipBehavior: Clip.antiAlias,
+          children: [
+            Positioned(
+              left: -30,
+              top: -30,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: data.ringColor, width: 15),
+                ),
+              ),
             ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // was 0, added some spacing at the top
-              Text(
-                data.title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 17, // was 20
-                  fontWeight: FontWeight.bold,
-                  height: 1.1, // was 1.2
+            Positioned(
+              right: -30,
+              bottom: -30,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: data.ringColor, width: 15),
                 ),
               ),
-              const SizedBox(height: 17), // was 11
-              SizedBox(
-                width: 160, // was 170
-                child: Text(
-                  data.subtitle,
-                  style: const TextStyle(
-                    color: Color(0xFFF5E9E4),
-                    fontSize: 11.5, // was 13
-                    height: 1.25, // was 1.4
-                  ),
-                ),
+            ),
+            Positioned(
+              right: 5,
+              bottom: -10,
+              child: Image.asset(
+                data.imagePath,
+                height: 130,
+                fit: BoxFit.contain,
               ),
-              const SizedBox(height: 17), // was 20
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: data.cardColor,
-                  elevation: 0,
-                  minimumSize:
-                      Size.zero, // lets the button shrink below default min
-                  tapTargetSize: MaterialTapTargetSize
-                      .shrinkWrap, // removes extra invisible padding
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 6, // was 10
+            ),
+            // Only the text/button content gets the inner padding now.
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    data.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      height: 1.1,
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28),
+                  const SizedBox(height: 17),
+                  SizedBox(
+                    width: 160,
+                    child: Text(
+                      data.subtitle,
+                      style: const TextStyle(
+                        color: Color(0xFFF5E9E4),
+                        fontSize: 11.5,
+                        height: 1.25,
+                      ),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  "Shop now",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                ),
+                  const SizedBox(height: 17),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: data.cardColor,
+                      elevation: 0,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 6,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                    ),
+                    child: const Text(
+                      "Shop now",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
