@@ -160,7 +160,7 @@ class _ClothEcomProductsState extends State<ClothEcomProducts> {
                 TextButton(
                   onPressed: () {},
                   child: Text(
-                    "See all",
+                    "See  All",
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
