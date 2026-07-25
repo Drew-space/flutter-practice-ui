@@ -71,7 +71,11 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         // ...rest of your theme
       ),
-      home: ClotheEcomNavbar(),
+      // the routes
+      // GadgetNavbar
+      // AuthScreen
+      // ClotheEcomNavbar
+      home: AuthScreen(),
     );
   }
 }

@@ -163,7 +163,7 @@ final housesProvider = Provider<List<Map<String, dynamic>>>((ref) {
     {
       "id": "h5",
       "images": [
-        "https://paltonmorgan.com/naresus/2023/02/paramount-4-1280x719.jpg",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUg3FtdZg7SlazNvX57wakmKCvdXWGopX8EfXkoaRbBmSJ8my0RetkSGM&s=10",
       ],
       "title": "Luxury House",
       "location": "Osaka, Japan",

@@ -44,26 +44,30 @@ class AuthScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 50),
 
-              const AuthImageHeader(),
+                const AuthImageHeader(),
 
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-              const AuthHeadline(highlightColor: primaryBlue),
+                const AuthHeadline(highlightColor: primaryBlue),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              AuthActionButtons(
-                primaryColor: primaryBlue,
-                onSignUpTap: () => _openAuthSheet(context, startAsSignUp: true),
-                onLoginTap: () => _openAuthSheet(context, startAsSignUp: false),
-              ),
+                AuthActionButtons(
+                  primaryColor: primaryBlue,
+                  onSignUpTap: () =>
+                      _openAuthSheet(context, startAsSignUp: true),
+                  onLoginTap: () =>
+                      _openAuthSheet(context, startAsSignUp: false),
+                ),
 
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
