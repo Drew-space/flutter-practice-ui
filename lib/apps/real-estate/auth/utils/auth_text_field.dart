@@ -63,7 +63,7 @@ class AuthTextField extends StatelessWidget {
                           ? HugeIcons.strokeRoundedView
                           : HugeIcons.strokeRoundedViewOff,
                       color: Colors.grey[500]!,
-                      size: 20,
+                      size: 21,
                     ),
                   )
                 : null,
