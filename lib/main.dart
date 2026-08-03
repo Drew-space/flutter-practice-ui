@@ -31,6 +31,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart'; // 👈 new import
 import 'package:practice_ui/apps/cloth_ecom/cloth_ecom_navbar.dart';
+import 'package:practice_ui/apps/counter.dart';
 import 'package:practice_ui/apps/furniture/pages/furniture_home_screen.dart';
 import 'package:practice_ui/apps/furniture/pages/furniture_navbar.dart';
 import 'package:practice_ui/apps/gadgetapp/gadget_navbar.dart';
@@ -69,13 +70,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: true,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
-        // ...rest of your theme
+        //
       ),
       // the routes
       // GadgetNavbar
       // AuthScreen
       // ClotheEcomNavbar
-      home: AuthScreen(),
+      // FurnitureNavbar
+      home: CounterPage(),
     );
   }
 }
