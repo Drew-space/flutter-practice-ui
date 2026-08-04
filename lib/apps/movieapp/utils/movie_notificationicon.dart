@@ -12,8 +12,8 @@ class MovieNotificationIcon extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            border: Border.all(color: Colors.grey.shade200, width: 2),
+            // borderRadius: BorderRadius.circular(50),
+            // border: Border.all(color: Colors.grey.shade200, width: 2),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
