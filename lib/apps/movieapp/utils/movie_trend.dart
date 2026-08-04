@@ -16,10 +16,11 @@ class TrendingMovie {
 
 final List<TrendingMovie> _trendingMovies = [
   const TrendingMovie(
-    title: "Wonder Woman",
+    title: "Avatar Aang: The Last Airbender",
     rating: 8.9,
     date: "Jan 09 2026",
-    imageUrl: "https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg",
+    imageUrl:
+        "https://miscrave.com/wp-content/uploads/2026/04/Legend-of-Aang-Avatar-Movie-700x1015.jpg",
   ),
   const TrendingMovie(
     title: "Strantger 5",

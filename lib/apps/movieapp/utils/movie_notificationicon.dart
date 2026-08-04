@@ -41,7 +41,7 @@ class MovieNotificationIcon extends StatelessWidget {
                       width: 12,
                       height: 12,
                       decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: Color(0xFF7a65c0),
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 1.5),
                       ),

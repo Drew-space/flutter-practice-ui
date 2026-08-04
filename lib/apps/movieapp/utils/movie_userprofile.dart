@@ -7,7 +7,6 @@ class MovieUserprofileRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      // <-- SafeArea removed
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
@@ -25,15 +24,15 @@ class MovieUserprofileRow extends StatelessWidget {
               children: [
                 Text(
                   "Hi Alex.R",
-                  style: TextStyle(fontSize: 14, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   "Enjoy your movie",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white60,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.white60),
                 ),
               ],
             ),

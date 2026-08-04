@@ -49,14 +49,14 @@ final List<Movie> _movies = [
   ),
   Movie(
     title: "Spider-Man: No Way Home",
-    imageUrl: "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLDR.jpg",
+    imageUrl: "https://i.redd.it/wsx5cmsej9j91.jpg",
     duration: "2h 28min",
     releaseDate: "2021",
     rating: 4.7,
   ),
   Movie(
     title: "The Batman",
-    imageUrl: "https://image.tmdb.org/t/p/w500/74xTEgt7R36FpoooUQ5EWz1f1g5.jpg",
+    imageUrl: "https://cdn.europosters.eu/image/1300/123341.jpg",
     duration: "2h 56min",
     releaseDate: "2022",
     rating: 4.6,

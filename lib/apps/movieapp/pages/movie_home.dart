@@ -13,7 +13,7 @@ class MovieHomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        bottom: false, // <-- KEY: let content scroll behind the navbar
+        bottom: false,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -30,8 +30,6 @@ class MovieHomeScreen extends StatelessWidget {
                 const PopularMovie(),
                 const SizedBox(height: 24),
                 const MovieGrid(),
-                // Extra space so the last card clears the floating navbar
-                SizedBox(height: MediaQuery.of(context).padding.bottom + 100),
               ],
             ),
           ),
