@@ -109,25 +109,25 @@ class _MovieCardScrollerState extends State<MovieCardScroller> {
           ),
         ),
         const SizedBox(height: 14),
-        SmoothPageIndicator(
-          controller: _pageController,
-          count: _movieCards.length,
-          onDotClicked: (index) {
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 350),
-              curve: Curves.easeInOut,
-            );
-          },
-          effect: ExpandingDotsEffect(
-            activeDotColor: const Color(0xFF7a65c0),
-            dotColor: const Color(0xFFFFFFFF),
-            dotHeight: 8,
-            dotWidth: 8,
-            expansionFactor: 3,
-            spacing: 6,
-          ),
-        ),
+        // SmoothPageIndicator(
+        //   controller: _pageController,
+        //   count: _movieCards.length,
+        //   onDotClicked: (index) {
+        //     _pageController.animateToPage(
+        //       index,
+        //       duration: const Duration(milliseconds: 350),
+        //       curve: Curves.easeInOut,
+        //     );
+        //   },
+        //   effect: ExpandingDotsEffect(
+        //     activeDotColor: const Color(0xFF7a65c0),
+        //     dotColor: const Color(0xFFFFFFFF),
+        //     dotHeight: 8,
+        //     dotWidth: 8,
+        //     expansionFactor: 3,
+        //     spacing: 6,
+        //   ),
+        // ),
       ],
     );
   }
