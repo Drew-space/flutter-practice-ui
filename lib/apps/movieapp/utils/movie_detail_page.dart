@@ -80,7 +80,7 @@ class MovieDetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'The Huntsman',
+                          'Spider-Man: Brand New Day',
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
@@ -180,7 +180,7 @@ class MovieDetailPage extends StatelessWidget {
                   _SectionTitle(title: 'Synopsis'),
                   const SizedBox(height: 12),
                   Text(
-                    'A drama about Jody, a young man struggling with maturity and responsibility while living with his mom in South Central LA. Taraji P. Henson plays Yvette, his girlfriend who wants him to grow up and face the realities of adulthood. As tensions rise and choices become harder, Jody must decide what kind of man he wants to be.',
+                    "A forgotten Peter Parker lives alone as a full-time Spider-Man until mounting pressure triggers a dangerous change and a powerful new enemy emerges.",
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.grey[400],
@@ -234,30 +234,67 @@ class MovieDetailPage extends StatelessWidget {
                       physics: const BouncingScrollPhysics(),
                       children: const [
                         _CastCard(
-                          name: 'Chris Hemsworth',
-                          role: 'The Huntsman',
-                          imageUrl: 'https://i.pravatar.cc/300?img=11',
+                          name: 'Tom Holland',
+                          role: 'Peter Parker / Spider-Man',
+                          imageUrl:
+                              'https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcS9r-FRHaSWFNAVrvW9jNfHEHZFo8NpQL6NHpcK7ksyJ0QO_4B8ufcooMAHc5oVknua0-mV52GjSPfQxKKusSYKhRaU06qeE9P6CoFdlftuOnPcrFs7cu_J6-pA-Y380U_RTMoXW2w6rdc&s=19',
                         ),
                         _CastCard(
-                          name: 'Charlize Theron',
-                          role: 'Ravenna',
-                          imageUrl: 'https://i.pravatar.cc/300?img=5',
+                          name: 'Zendaya',
+                          role: 'MJ',
+                          imageUrl:
+                              'https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcTH0uF_IqMPEg4u68CA131G6W52sUHO8kEKpx0vO7JVCfP-cYJao0dN0W5YiW7NxC5awhu-wMW8XSfQBKc',
                         ),
                         _CastCard(
-                          name: 'Emily Blunt',
-                          role: 'Freya',
-                          imageUrl: 'https://i.pravatar.cc/300?img=9',
+                          name: 'Jacob Batalon',
+                          role: 'Ned Leeds',
+                          imageUrl:
+                              'https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQnB_jGazdgPTcfw3ePKKo17jZzbPjs02UBWf5xIOR1RBPQXG6Qw_jdqlPFNhVMmKjNmgk_uNG4GKk1yQGOJCgRjBvFIBaa2Wn0RfBnZtRk2esMCsyCyIAxW6EMFCo5fFPJjyR8jKC_Iw&s=19',
                         ),
                         _CastCard(
-                          name: 'Jessica Chastain',
-                          role: 'Sara',
-                          imageUrl: 'https://i.pravatar.cc/300?img=16',
+                          name: 'Jon Bernthal',
+                          role: 'Frank Castle / Punisher',
+                          imageUrl:
+                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSW9jvpT1H4p4KsiDut5tCHeqCq7yb1PpRVqm5vm9vjHJy24xzaGyt2Uqv3ba-_mK1gnUggcIr2jFGP5BcQm42fv6sXi0beqjtikxNxtA&s=10',
                         ),
                         _CastCard(
-                          name: 'Nick Frost',
-                          role: 'Nion',
-                          imageUrl: 'https://i.pravatar.cc/300?img=13',
+                          name: 'Mark Ruffalo',
+                          role: 'Bruce Banner / Hulk',
+                          imageUrl:
+                              'https://m.media-amazon.com/images/M/MV5BM2JiYzA0ZGItNmFhYy00MjIyLWEwN2QtMzRmNDUyNjNiZjBiXkEyXkFqcGc@._V1_.jpg',
                         ),
+                        _CastCard(
+                          name: 'Sadie Sink',
+                          role: 'TBA',
+                          imageUrl:
+                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLnUQM5V6Oq7BnAGiLmZF-peHnu6Tw_rBKEurw9kVEtZVM-rjYEV7TkV7onLPH7E6Y_VGmee3D6y1UpkrVsaoqJGKOiZlx3Ub_7-FWAg&s=10",
+                        ),
+
+                        // _CastCard(
+                        //   name: 'Chris Hemsworth',
+                        //   role: 'The Huntsman',
+                        //   imageUrl: 'https://i.pravatar.cc/300?img=11',
+                        // ),
+                        // _CastCard(
+                        //   name: 'Charlize Theron',
+                        //   role: 'Ravenna',
+                        //   imageUrl: 'https://i.pravatar.cc/300?img=5',
+                        // ),
+                        // _CastCard(
+                        //   name: 'Emily Blunt',
+                        //   role: 'Freya',
+                        //   imageUrl: 'https://i.pravatar.cc/300?img=9',
+                        // ),
+                        // _CastCard(
+                        //   name: 'Jessica Chastain',
+                        //   role: 'Sara',
+                        //   imageUrl: 'https://i.pravatar.cc/300?img=16',
+                        // ),
+                        // _CastCard(
+                        //   name: 'Nick Frost',
+                        //   role: 'Nion',
+                        //   imageUrl: 'https://i.pravatar.cc/300?img=13',
+                        // ),
                       ],
                     ),
                   ),
@@ -330,7 +367,7 @@ class _HeroPoster extends StatelessWidget {
         ),
       ),
       child: Image.network(
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1ubFb1rxZgMct50Zqcub3o033llcIFYSdpUwDTXUaPjN3Hl1nDxuPiUGD-BClr6x8Dkmx&s=10',
+        "https://m.media-amazon.com/images/M/MV5BOWNjYWM3NWItOGE0ZS00MWRjLThiZWEtYjc4ZmNmMmU5ZTVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
         fit: BoxFit.cover,
         alignment: Alignment.topCenter,
       ),
