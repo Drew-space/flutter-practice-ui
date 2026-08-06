@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_bookmarks_screen.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_download_screen.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_home.dart';
-import 'package:practice_ui/apps/movieapp/pages/movie_profile_screen.dart';
+import 'package:practice_ui/apps/movieapp/pages/movie_settings_screen.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_search_screen.dart';
 
 class MovieNavbar extends StatefulWidget {
@@ -29,7 +29,7 @@ class _MovieNavbarState extends State<MovieNavbar> {
     const MovieSearchScreen(),
     const MovieBookmarksScreen(),
     const MovieDownloadScreen(),
-    const MovieProfileScreen(),
+    const MovieSettingsScreen(),
   ];
 
   final List<_NavItemData> _items = const [
@@ -37,7 +37,7 @@ class _MovieNavbarState extends State<MovieNavbar> {
     _NavItemData(label: 'Search', icon: HugeIcons.strokeRoundedSearch01),
     _NavItemData(label: 'Bookmarks', icon: HugeIcons.strokeRoundedBookmark01),
     _NavItemData(label: 'Downloads', icon: HugeIcons.strokeRoundedDownload01),
-    _NavItemData(label: 'Profile', icon: HugeIcons.strokeRoundedUser),
+    _NavItemData(label: 'Settings', icon: HugeIcons.strokeRoundedSettings01),
   ];
 
   @override

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class MovieProfileScreen extends StatefulWidget {
-  const MovieProfileScreen({super.key});
+class MovieSettingsScreen extends StatefulWidget {
+  const MovieSettingsScreen({super.key});
 
   @override
-  State<MovieProfileScreen> createState() => _MovieProfileScreenState();
+  State<MovieSettingsScreen> createState() => _MovieSettingsScreenState();
 }
 
-class _MovieProfileScreenState extends State<MovieProfileScreen> {
+class _MovieSettingsScreenState extends State<MovieSettingsScreen> {
   bool pauseNotifications = true;
   bool darkMode = false;
 
@@ -17,6 +17,7 @@ class _MovieProfileScreenState extends State<MovieProfileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0A),
       body: SafeArea(
+        bottom: false,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
@@ -30,25 +31,6 @@ class _MovieProfileScreenState extends State<MovieProfileScreen> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
-                            shape: BoxShape.circle,
-                          ),
-                          child: HugeIcon(
-                            icon: HugeIcons.strokeRoundedArrowLeft01,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ),
                     const Text(
                       'Settings',
                       style: TextStyle(
@@ -78,7 +60,8 @@ class _MovieProfileScreenState extends State<MovieProfileScreen> {
                       children: [
                         ClipOval(
                           child: Image.network(
-                            'https://i.pravatar.cc/300?img=33',
+                            "https://img.magnific.com/free-photo/confident-waitress-looking-camera_23-2147830510.jpg",
+
                             width: 48,
                             height: 48,
                             fit: BoxFit.cover,
@@ -90,7 +73,7 @@ class _MovieProfileScreenState extends State<MovieProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Your Name',
+                                'Alex.R',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -98,13 +81,13 @@ class _MovieProfileScreenState extends State<MovieProfileScreen> {
                                 ),
                               ),
                               const SizedBox(height: 2),
-                              Text(
-                                '@yourname',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
+                              // Text(
+                              //   '@yourname',
+                              //   style: TextStyle(
+                              //     fontSize: 13,
+                              //     color: Colors.grey[500],
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -135,7 +118,7 @@ class _MovieProfileScreenState extends State<MovieProfileScreen> {
                         icon: HugeIcons.strokeRoundedNotification02,
                         label: 'Pause notifications',
                         value: pauseNotifications,
-                        activeColor: const Color(0xFFA3E635),
+                        activeColor: const Color(0xFF8B5CF6),
                         onChanged: (v) =>
                             setState(() => pauseNotifications = v),
                       ),
@@ -170,7 +153,7 @@ class _MovieProfileScreenState extends State<MovieProfileScreen> {
                         icon: HugeIcons.strokeRoundedMoon02,
                         label: 'Dark mode',
                         value: darkMode,
-                        activeColor: Colors.white,
+                        activeColor: const Color(0xFF8B5CF6),
                         onChanged: (v) => setState(() => darkMode = v),
                       ),
                       Divider(

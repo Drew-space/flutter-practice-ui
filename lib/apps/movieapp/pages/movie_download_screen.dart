@@ -11,6 +11,7 @@ class MovieDownloadScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0A),
       body: SafeArea(
+        bottom: false,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
@@ -20,22 +21,6 @@ class MovieDownloadScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          shape: BoxShape.circle,
-                        ),
-                        child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedArrowLeft01,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
                     const Expanded(
                       child: Text(
                         'Downloads',
@@ -328,30 +313,7 @@ class _DownloadingMovieItem extends StatelessWidget {
                   height: 90,
                   fit: BoxFit.cover,
                 ),
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.45),
-                    child: Center(
-                      child: Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedPause,
-                          color: Colors.white,
-                          size: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+
                 Positioned(
                   top: 6,
                   left: 6,

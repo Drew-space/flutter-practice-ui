@@ -20,22 +20,6 @@ class MovieBookmarksScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          shape: BoxShape.circle,
-                        ),
-                        child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedArrowLeft01,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
                     const Expanded(
                       child: Text(
                         'My Wishlist',
