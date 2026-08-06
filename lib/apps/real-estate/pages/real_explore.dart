@@ -14,7 +14,6 @@ class RealExplore extends StatelessWidget {
   }
 }
 
-/// MAIN SCREEN
 class PropertySearchScreen extends StatelessWidget {
   const PropertySearchScreen({super.key});
 

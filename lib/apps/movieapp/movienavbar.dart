@@ -5,6 +5,7 @@ import 'package:practice_ui/apps/gadgetapp/pages/gadget_home_screen.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/gadget_profile_screen.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/gadget_shop_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:practice_ui/apps/movieapp/pages/movie_bookmarks_screen.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_download_screen.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_home.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_profile_screen.dart';
@@ -26,6 +27,7 @@ class _MovieNavbarState extends State<MovieNavbar> {
   final List<Widget> _pages = [
     const MovieHomeScreen(),
     const MovieSearchScreen(),
+    const MovieBookmarksScreen(),
     const MovieDownloadScreen(),
     const MovieProfileScreen(),
   ];
@@ -33,6 +35,7 @@ class _MovieNavbarState extends State<MovieNavbar> {
   final List<_NavItemData> _items = const [
     _NavItemData(label: 'Home', icon: HugeIcons.strokeRoundedHome01),
     _NavItemData(label: 'Search', icon: HugeIcons.strokeRoundedSearch01),
+    _NavItemData(label: 'Bookmarks', icon: HugeIcons.strokeRoundedBookmark01),
     _NavItemData(label: 'Downloads', icon: HugeIcons.strokeRoundedDownload01),
     _NavItemData(label: 'Profile', icon: HugeIcons.strokeRoundedUser),
   ];
