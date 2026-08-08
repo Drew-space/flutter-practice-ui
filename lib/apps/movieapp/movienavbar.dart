@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:practice_ui/apps/gadgetapp/pages/gadget_favourite_screen.dart';
-import 'package:practice_ui/apps/gadgetapp/pages/gadget_home_screen.dart';
-import 'package:practice_ui/apps/gadgetapp/pages/gadget_profile_screen.dart';
-import 'package:practice_ui/apps/gadgetapp/pages/gadget_shop_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_bookmarks_screen.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_download_screen.dart';
-import 'package:practice_ui/apps/movieapp/pages/movie_home.dart';
+import 'package:practice_ui/apps/movieapp/pages/movie_home_screen.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_settings_screen.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_search_screen.dart';
 

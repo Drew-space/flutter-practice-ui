@@ -105,7 +105,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:practice_ui/apps/movieapp/movienavbar.dart';
-import 'package:practice_ui/apps/movieapp/pages/movie_home.dart';
+import 'package:practice_ui/apps/movieapp/pages/movie_home_screen.dart';
 
 class MovieOnboarding extends StatelessWidget {
   const MovieOnboarding({super.key});
@@ -120,7 +120,7 @@ class MovieOnboarding extends StatelessWidget {
         children: [
           // Background image
           Image.asset(
-            'assets/images/fluttermovie_app.jpg', // change to your actual image filename
+            'assets/images/black panther.jpg', // change to your actual image filename
             fit: BoxFit.cover,
           ),
 
@@ -196,7 +196,7 @@ class MovieOnboarding extends StatelessWidget {
                         foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                       child: const Text(

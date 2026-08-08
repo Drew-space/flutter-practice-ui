@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         //
@@ -52,7 +52,9 @@ class MyApp extends StatelessWidget {
       // ClotheEcomNavbar
       // FurnitureNavbar
       // MovieDetailPage
-      home: MovieNavbar(),
+      // MovieOnboarding
+      // MovieNavbar
+      home: MovieOnboarding(),
     );
   }
 }

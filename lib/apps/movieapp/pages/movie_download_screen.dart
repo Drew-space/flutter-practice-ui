@@ -373,7 +373,7 @@ class _DownloadingMovieItem extends StatelessWidget {
                       '${(progress * 100).toInt()}%',
                       style: const TextStyle(
                         fontSize: 11,
-                        color: Color(0xFF8B5CF6),
+                        color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -399,17 +399,17 @@ class _DownloadingMovieItem extends StatelessWidget {
           ),
 
           // Delete icon at top right
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: GestureDetector(
-              onTap: () {},
-              child: HugeIcon(
-                icon: HugeIcons.strokeRoundedDelete01,
-                size: 20,
-                color: Colors.grey[500]!,
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 2),
+          //   child: GestureDetector(
+          //     onTap: () {},
+          //     child: HugeIcon(
+          //       icon: HugeIcons.strokeRoundedDelete01,
+          //       size: 20,
+          //       color: Colors.grey[500]!,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
