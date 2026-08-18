@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hugeicons/hugeicons.dart';
+import 'package:practice_ui/apps/movieapp/loading/loading_card.dart';
 import 'package:practice_ui/apps/movieapp/movielib/movie_api_link/all_api_link.dart';
 
 class PopularMovie extends StatefulWidget {
@@ -72,15 +73,7 @@ class _PopularMovieState extends State<PopularMovie> {
       future: _popularFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            height: 250,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF7a65c0),
-                strokeWidth: 2,
-              ),
-            ),
-          );
+          return LoadingCard();
         }
 
         if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {

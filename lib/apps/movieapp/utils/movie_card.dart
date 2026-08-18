@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:practice_ui/apps/movieapp/loading/shimmer_movie_card.dart';
 import 'package:practice_ui/apps/movieapp/movielib/movie_api_link/all_api_link.dart';
 import 'package:practice_ui/apps/movieapp/utils/movie_detail_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -58,15 +59,94 @@ class _MovieCardScrollerState extends State<MovieCardScroller> {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: _moviesFuture,
       builder: (context, snapshot) {
+        // Replace this block in your FutureBuilder:
+        // if (snapshot.connectionState == ConnectionState.waiting) {
+        //   return SizedBox(
+        //     height: 280,
+        //     child: Column(
+        //       children: [
+        //         const Padding(
+        //           padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+        //           child: Row(
+        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //             children: [
+        //               Text(
+        //                 "Now Playing🔥",
+        //                 style: TextStyle(
+        //                   color: Colors.white,
+        //                   fontSize: 20,
+        //                   fontWeight: FontWeight.bold,
+        //                   letterSpacing: 0.3,
+        //                 ),
+        //               ),
+        //               SizedBox(
+        //                 width: 50,
+        //                 height: 14,
+        //                 child: DecoratedBox(
+        //                   decoration: BoxDecoration(
+        //                     color: Color(0xFF3D3D3D),
+        //                     borderRadius: BorderRadius.all(Radius.circular(4)),
+        //                   ),
+        //                 ),
+        //               ),
+        //             ],
+        //           ),
+        //         ),
+        //         SizedBox(
+        //           height: 240,
+        //           child: PageView.builder(
+        //             padEnds: false,
+        //             controller: PageController(viewportFraction: 0.84),
+        //             itemCount: 3, // Show 3 shimmer cards
+        //             itemBuilder: (_, __) => const ShimmerMovieCard(),
+        //           ),
+        //         ),
+        //         const SizedBox(height: 14),
+        //       ],
+        //     ),
+        //   );
+        // }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            height: 280,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF7a65c0),
-                strokeWidth: 2,
+          return Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Now Playing🔥",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 50,
+                      height: 14,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Color(0xFF3D3D3D),
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              SizedBox(
+                height: 240,
+                child: PageView.builder(
+                  padEnds: false,
+                  controller: _pageController, // reuse the real controller
+                  itemCount: 3,
+                  itemBuilder: (_, __) => const ShimmerMovieCard(),
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
           );
         }
 
