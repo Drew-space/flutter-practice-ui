@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:practice_ui/apps/movieapp/utils/movie_notificationIcon.dart';
+import 'package:practice_ui/apps/movieapp/widgets/movie_notificationicon.dart';
 
 class MovieUserprofileRow extends StatelessWidget {
   const MovieUserprofileRow({super.key});
