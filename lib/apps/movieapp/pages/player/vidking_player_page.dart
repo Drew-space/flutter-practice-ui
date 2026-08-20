@@ -1,14 +1,671 @@
-// import 'package:flutter/material.dart';
-// import 'package:practice_ui/apps/movieapp/models/movie_models.dart';
+// // import 'package:flutter/material.dart';
+// // import 'package:flutter/services.dart';
+// // import 'package:webview_flutter/webview_flutter.dart';
 
+// // class VidsrcPlayerPage extends StatefulWidget {
+// //   final Map<String, dynamic> movie;
+// //   final int season;
+// //   final int episode;
+
+// //   const VidsrcPlayerPage({
+// //     super.key,
+// //     required this.movie,
+// //     this.season = 1,
+// //     this.episode = 1,
+// //   });
+
+// //   @override
+// //   State<VidsrcPlayerPage> createState() => _VidsrcPlayerPageState();
+// // }
+
+// // class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
+// //     with WidgetsBindingObserver {
+// //   late final WebViewController _controller;
+// //   bool _isLoading = true;
+// //   bool _isFullscreen = false;
+
+// //   // Allowed domains
+// //   static const List<String> _allowedHosts = [
+// //     'vidsrcme.ru',
+// //     'cloudorchestranova.com',
+// //     'cdn.vidsrc.me',
+// //     'vidsrc.me',
+// //     'vidsrc.dev',
+// //     'vidsrc.to',
+// //     'vidsrc.in',
+// //     'vidsrc.net',
+// //     'vidsrc.xyz',
+// //     'vidsrc.cc',
+// //     'vidsrc.io',
+// //     'vidsrc.pm',
+// //     'vidsrc.vc',
+// //     'vidsrc.su',
+// //     'vidsrc.pro',
+// //     'vidsrc.tv',
+// //     'vidsrc.stream',
+// //     'vidsrc.click',
+// //     'vidsrc.icu',
+// //   ];
+
+// //   @override
+// //   void initState() {
+// //     super.initState();
+// //     WidgetsBinding.instance.addObserver(this);
+// //     _initWebView();
+// //   }
+
+// //   String get _title =>
+// //       widget.movie['title'] ?? widget.movie['name'] ?? 'Unknown';
+
+// //   String get _id {
+// //     final imdb = widget.movie['imdb_id'];
+// //     if (imdb != null && imdb.toString().isNotEmpty) {
+// //       return imdb.toString();
+// //     }
+// //     return widget.movie['id']?.toString() ?? '';
+// //   }
+
+// //   bool get _isMovie => widget.movie['title'] != null;
+
+// //   int get _currentSeason => widget.season;
+// //   int get _currentEpisode => widget.episode;
+
+// //   String get _vidsrcUrl {
+// //     if (_id.isEmpty) {
+// //       debugPrint('ERROR: No ID available for VidSrc');
+// //       return '';
+// //     }
+// //     if (_isMovie) {
+// //       return 'https://vidsrcme.ru/embed/movie/$_id?autoplay=1';
+// //     }
+// //     if (_currentSeason > 0 && _currentEpisode > 0) {
+// //       return 'https://vidsrcme.ru/embed/tv/$_id/$_currentSeason/$_currentEpisode?autoplay=1&autonext=1';
+// //     }
+// //     return 'https://vidsrcme.ru/embed/tv/$_id?autoplay=1&autonext=1';
+// //   }
+
+// //   String get _vidsrcUrlWithResume {
+// //     String url = _vidsrcUrl;
+// //     if (url.isEmpty) return url;
+// //     final savedProgress = _getSavedProgress();
+// //     if (savedProgress > 30) {
+// //       final separator = url.contains('?') ? '&' : '?';
+// //       url = '$url${separator}startAt=${savedProgress.toInt()}';
+// //     }
+// //     return url;
+// //   }
+
+// //   double _getSavedProgress() {
+// //     final saved = widget.movie['_savedProgress'];
+// //     if (saved != null) return (saved as num).toDouble();
+// //     return 0.0;
+// //   }
+
+// //   void _saveProgress(double progress) {
+// //     widget.movie['_savedProgress'] = progress;
+// //   }
+
+// //   void _initWebView() {
+// //     final url = _vidsrcUrlWithResume;
+// //     if (url.isEmpty) {
+// //       setState(() => _isLoading = false);
+// //       return;
+// //     }
+
+// //     _controller = WebViewController()
+// //       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+// //       ..setBackgroundColor(Colors.black)
+// //       ..setNavigationDelegate(
+// //         NavigationDelegate(
+// //           onPageFinished: (_) {
+// //             setState(() => _isLoading = false);
+// //             _injectPostMessageListener();
+// //             _blockAdsAndPopups();
+// //             _autoClickPlayButton();
+// //           },
+// //           onWebResourceError: (error) {
+// //             debugPrint('WebView error: ${error.description}');
+// //           },
+// //           onNavigationRequest: (request) {
+// //             final uri = Uri.parse(request.url);
+// //             final host = uri.host.toLowerCase();
+// //             final isAllowed = _allowedHosts.any((h) => host.contains(h));
+// //             if (!isAllowed) {
+// //               debugPrint('BLOCKED redirect to: ${request.url}');
+// //               return NavigationDecision.prevent;
+// //             }
+// //             return NavigationDecision.navigate;
+// //           },
+// //         ),
+// //       )
+// //       ..loadRequest(Uri.parse(url));
+// //   }
+
+// //   // Auto-click VidSrc's play button since autoplay=1 still shows a button on free domains
+// //   void _autoClickPlayButton() {
+// //     const js = """
+// //       (function() {
+// //         // Try to find and click the play button
+// //         function clickPlay() {
+// //           // VidSrc usually has a play button overlay
+// //           const playBtn = document.querySelector('.play-button, .vjs-big-play-button, [class*="play"], button[title*="Play"]');
+// //           if (playBtn) {
+// //             playBtn.click();
+// //             console.log('Auto-clicked play button');
+// //             return true;
+// //           }
+// //           // Try clicking the video element itself
+// //           const video = document.querySelector('video');
+// //           if (video && video.paused) {
+// //             video.play();
+// //             console.log('Auto-played video element');
+// //             return true;
+// //           }
+// //           return false;
+// //         }
+
+// //         // Try immediately and after a short delay
+// //         clickPlay();
+// //         setTimeout(clickPlay, 500);
+// //         setTimeout(clickPlay, 1500);
+// //         setTimeout(clickPlay, 3000);
+// //       })();
+// //     """;
+// //     _controller.runJavaScript(js);
+// //   }
+
+// //   void _blockAdsAndPopups() {
+// //     const js = """
+// //       (function() {
+// //         'use strict';
+// //         window.open = function() {
+// //           console.log('BLOCKED: window.open popup');
+// //           return null;
+// //         };
+// //         document.addEventListener('click', function(e) {
+// //           const target = e.target.closest('a');
+// //           if (target) {
+// //             const href = target.href || '';
+// //             const allowed = ['vidsrc', 'cloudorchestranova', 'javascript:', '#'];
+// //             const isAllowed = allowed.some(function(a) { return href.includes(a); });
+// //             if (!isAllowed) {
+// //               console.log('BLOCKED click to:', href);
+// //               e.preventDefault();
+// //               e.stopPropagation();
+// //               return false;
+// //             }
+// //           }
+// //         }, true);
+// //         function removeAds() {
+// //           const selectors = [
+// //             'iframe[src*=\"aliexpress\"]',
+// //             'iframe[src*=\"advertising\"]',
+// //             'iframe[src*=\"ads\"]',
+// //             'iframe[src*=\"popup\"]',
+// //             'iframe[src*=\"click\"]',
+// //             'iframe[src*=\"banner\"]',
+// //             'div[class*=\"ad\"]',
+// //             'div[id*=\"ad\"]',
+// //             'div[class*=\"popup\"]',
+// //             'div[id*=\"popup\"]',
+// //             'div[class*=\"banner\"]',
+// //             'div[id*=\"banner\"]',
+// //             'a[target=\"_blank\"]',
+// //             '[onclick*=\"window.open\"]',
+// //           ];
+// //           selectors.forEach(function(selector) {
+// //             document.querySelectorAll(selector).forEach(function(el) {
+// //               console.log('REMOVED ad element:', selector);
+// //               el.remove();
+// //             });
+// //           });
+// //         }
+// //         removeAds();
+// //         const observer = new MutationObserver(removeAds);
+// //         observer.observe(document.body, { childList: true, subtree: true });
+// //         const originalReplace = window.location.replace;
+// //         window.location.replace = function(url) {
+// //           const allowed = ['vidsrc', 'cloudorchestranova'];
+// //           if (allowed.some(function(a) { return url.includes(a); })) {
+// //             return originalReplace.call(window.location, url);
+// //           }
+// //           console.log('BLOCKED location.replace to:', url);
+// //         };
+// //         window.onbeforeunload = null;
+// //         console.log('Ad blocker injected successfully');
+// //       })();
+// //     """;
+// //     _controller.runJavaScript(js);
+// //   }
+
+// //   void _injectPostMessageListener() {
+// //     const jsCode = """
+// //       (function() {
+// //         window.addEventListener('message', function(event) {
+// //           if (event.data && event.data.type === 'PLAYER_EVENT') {
+// //             const data = event.data.data;
+// //             console.log('VIDSRC_EVENT:' + JSON.stringify(data));
+// //           }
+// //         });
+// //       })();
+// //     """;
+// //     _controller.runJavaScript(jsCode);
+// //   }
+
+// //   void _handlePlayerEvent(Map<String, dynamic> data) {
+// //     final status = data['player_status']?.toString();
+// //     final progress = (data['player_progress'] as num?)?.toDouble() ?? 0.0;
+// //     if (status == 'playing' && progress > 0) {
+// //       _saveProgress(progress);
+// //     }
+// //   }
+
+// //   // Listen for fullscreen changes from VidSrc's native fullscreen button
+// //   void _listenForFullscreenChanges() {
+// //     const js = """
+// //       (function() {
+// //         document.addEventListener('fullscreenchange', function() {
+// //           const isFullscreen = !!document.fullscreenElement;
+// //           console.log('FULLSCREEN_CHANGE:' + isFullscreen);
+// //         });
+// //       })();
+// //     """;
+// //     _controller.runJavaScript(js);
+// //   }
+
+// //   @override
+// //   void didChangeAppLifecycleState(AppLifecycleState state) {}
+
+// //   @override
+// //   void dispose() {
+// //     WidgetsBinding.instance.removeObserver(this);
+// //     SystemChrome.setPreferredOrientations([
+// //       DeviceOrientation.portraitUp,
+// //       DeviceOrientation.portraitDown,
+// //     ]);
+// //     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+// //     _controller.clearCache();
+// //     super.dispose();
+// //   }
+
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return Scaffold(
+// //       backgroundColor: Colors.black,
+// //       body: _isFullscreen ? _buildFullscreenView() : _buildPortraitView(),
+// //     );
+// //   }
+
+// //   // PORTRAIT: Video centered at top, movie info below, VidSrc native controls visible
+// //   Widget _buildPortraitView() {
+// //     return SafeArea(
+// //       child: Column(
+// //         children: [
+// //           // Top App Bar
+// //           _buildAppBar(),
+
+// //           // Video Player - centered 16:9 with VidSrc native controls
+// //           AspectRatio(
+// //             aspectRatio: 16 / 9,
+// //             child: Container(
+// //               color: Colors.black,
+// //               child: Stack(
+// //                 fit: StackFit.expand,
+// //                 children: [
+// //                   WebViewWidget(controller: _controller),
+// //                   if (_isLoading)
+// //                     Container(
+// //                       color: Colors.black,
+// //                       child: const Center(
+// //                         child: CircularProgressIndicator(
+// //                           color: Color(0xFF7C3AED),
+// //                         ),
+// //                       ),
+// //                     ),
+// //                 ],
+// //               ),
+// //             ),
+// //           ),
+
+// //           // Movie info below video (scrollable)
+// //           Expanded(
+// //             child: SingleChildScrollView(
+// //               padding: const EdgeInsets.all(16),
+// //               child: Column(
+// //                 crossAxisAlignment: CrossAxisAlignment.start,
+// //                 children: [
+// //                   Text(
+// //                     _title,
+// //                     style: const TextStyle(
+// //                       color: Colors.white,
+// //                       fontSize: 22,
+// //                       fontWeight: FontWeight.bold,
+// //                     ),
+// //                   ),
+// //                   const SizedBox(height: 8),
+// //                   Row(
+// //                     children: [
+// //                       _MetaBadge(
+// //                         icon: Icons.star_rounded,
+// //                         label: _getRating(),
+// //                         color: Colors.amber,
+// //                       ),
+// //                       const SizedBox(width: 12),
+// //                       _MetaBadge(
+// //                         icon: Icons.calendar_today_rounded,
+// //                         label: _getYear(),
+// //                       ),
+// //                       const SizedBox(width: 12),
+// //                       Container(
+// //                         padding: const EdgeInsets.symmetric(
+// //                           horizontal: 8,
+// //                           vertical: 3,
+// //                         ),
+// //                         decoration: BoxDecoration(
+// //                           color: Colors.white.withOpacity(0.1),
+// //                           borderRadius: BorderRadius.circular(6),
+// //                         ),
+// //                         child: const Text(
+// //                           'HD',
+// //                           style: TextStyle(
+// //                             fontSize: 11,
+// //                             fontWeight: FontWeight.w700,
+// //                             color: Colors.white,
+// //                           ),
+// //                         ),
+// //                       ),
+// //                     ],
+// //                   ),
+// //                   const SizedBox(height: 16),
+
+// //                   // Episode info (TV only)
+// //                   if (!_isMovie)
+// //                     Container(
+// //                       padding: const EdgeInsets.symmetric(
+// //                         horizontal: 14,
+// //                         vertical: 8,
+// //                       ),
+// //                       decoration: BoxDecoration(
+// //                         color: Colors.white.withOpacity(0.08),
+// //                         borderRadius: BorderRadius.circular(10),
+// //                       ),
+// //                       child: Text(
+// //                         'Season $_currentSeason  Episode $_currentEpisode',
+// //                         style: const TextStyle(
+// //                           color: Colors.white,
+// //                           fontSize: 13,
+// //                           fontWeight: FontWeight.w600,
+// //                         ),
+// //                       ),
+// //                     ),
+// //                   if (!_isMovie) const SizedBox(height: 16),
+
+// //                   // Synopsis
+// //                   Text(
+// //                     'Synopsis',
+// //                     style: TextStyle(
+// //                       color: Colors.grey[400],
+// //                       fontSize: 14,
+// //                       fontWeight: FontWeight.w600,
+// //                     ),
+// //                   ),
+// //                   const SizedBox(height: 8),
+// //                   Text(
+// //                     _getSynopsis(),
+// //                     style: TextStyle(
+// //                       color: Colors.grey[500],
+// //                       fontSize: 14,
+// //                       height: 1.6,
+// //                     ),
+// //                   ),
+
+// //                   const SizedBox(height: 20),
+
+// //                   // Episode navigation (TV only)
+// //                   if (!_isMovie) _buildEpisodeNav(),
+// //                 ],
+// //               ),
+// //             ),
+// //           ),
+// //         ],
+// //       ),
+// //     );
+// //   }
+
+// //   Widget _buildEpisodeNav() {
+// //     return Row(
+// //       children: [
+// //         if (_currentEpisode > 1)
+// //           Expanded(
+// //             child: _NavButton(
+// //               icon: Icons.skip_previous_rounded,
+// //               label: 'Previous Episode',
+// //               onTap: () {
+// //                 final newUrl = _vidsrcUrl.replaceAll(
+// //                   '/$_currentSeason/$_currentEpisode',
+// //                   '/$_currentSeason/${_currentEpisode - 1}',
+// //                 );
+// //                 _controller.loadRequest(Uri.parse(newUrl));
+// //               },
+// //             ),
+// //           ),
+// //         if (_currentEpisode > 1) const SizedBox(width: 12),
+// //         Expanded(
+// //           child: _NavButton(
+// //             icon: Icons.skip_next_rounded,
+// //             label: 'Next Episode',
+// //             onTap: () {
+// //               final newUrl = _vidsrcUrl.replaceAll(
+// //                 '/$_currentSeason/$_currentEpisode',
+// //                 '/$_currentSeason/${_currentEpisode + 1}',
+// //               );
+// //               _controller.loadRequest(Uri.parse(newUrl));
+// //             },
+// //           ),
+// //         ),
+// //       ],
+// //     );
+// //   }
+
+// //   // FULLSCREEN: Video fills entire screen in landscape
+// //   Widget _buildFullscreenView() {
+// //     return Stack(
+// //       fit: StackFit.expand,
+// //       children: [
+// //         WebViewWidget(controller: _controller),
+// //         if (_isLoading)
+// //           Container(
+// //             color: Colors.black,
+// //             child: const Center(
+// //               child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+// //             ),
+// //           ),
+// //         // Exit fullscreen button
+// //         Positioned(
+// //           top: 16,
+// //           left: 16,
+// //           child: SafeArea(
+// //             child: GestureDetector(
+// //               onTap: () {
+// //                 setState(() => _isFullscreen = false);
+// //                 SystemChrome.setPreferredOrientations([
+// //                   DeviceOrientation.portraitUp,
+// //                   DeviceOrientation.portraitDown,
+// //                 ]);
+// //                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+// //               },
+// //               child: Container(
+// //                 padding: const EdgeInsets.all(10),
+// //                 decoration: BoxDecoration(
+// //                   color: Colors.black.withOpacity(0.5),
+// //                   shape: BoxShape.circle,
+// //                 ),
+// //                 child: const Icon(
+// //                   Icons.fullscreen_exit_rounded,
+// //                   color: Colors.white,
+// //                   size: 24,
+// //                 ),
+// //               ),
+// //             ),
+// //           ),
+// //         ),
+// //       ],
+// //     );
+// //   }
+
+// //   Widget _buildAppBar() {
+// //     return Container(
+// //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+// //       child: Row(
+// //         children: [
+// //           GestureDetector(
+// //             onTap: () => Navigator.pop(context),
+// //             child: Container(
+// //               padding: const EdgeInsets.all(8),
+// //               decoration: BoxDecoration(
+// //                 color: Colors.white.withOpacity(0.1),
+// //                 shape: BoxShape.circle,
+// //               ),
+// //               child: const Icon(
+// //                 Icons.arrow_back_ios_new_rounded,
+// //                 color: Colors.white,
+// //                 size: 18,
+// //               ),
+// //             ),
+// //           ),
+// //           const SizedBox(width: 12),
+// //           Expanded(
+// //             child: Text(
+// //               _isMovie ? 'Now Playing' : 'S$_currentSeason E$_currentEpisode',
+// //               style: const TextStyle(
+// //                 color: Colors.white,
+// //                 fontSize: 16,
+// //                 fontWeight: FontWeight.w600,
+// //               ),
+// //             ),
+// //           ),
+// //           GestureDetector(
+// //             onTap: () {},
+// //             child: Container(
+// //               padding: const EdgeInsets.all(8),
+// //               decoration: BoxDecoration(
+// //                 color: Colors.white.withOpacity(0.1),
+// //                 shape: BoxShape.circle,
+// //               ),
+// //               child: const Icon(Icons.cast, color: Colors.white, size: 18),
+// //             ),
+// //           ),
+// //         ],
+// //       ),
+// //     );
+// //   }
+
+// //   String _getRating() {
+// //     final rating =
+// //         (widget.movie['vote_average'] as num?)?.toDouble() ??
+// //         (widget.movie['rating'] as num?)?.toDouble() ??
+// //         0.0;
+// //     return rating.toStringAsFixed(1);
+// //   }
+
+// //   String _getYear() {
+// //     final date =
+// //         widget.movie['release_date'] ?? widget.movie['first_air_date'] ?? '';
+// //     if (date.toString().isNotEmpty) {
+// //       final parsed = DateTime.tryParse(date.toString());
+// //       return parsed?.year.toString() ?? 'TBD';
+// //     }
+// //     return widget.movie['year']?.toString() ?? 'TBD';
+// //   }
+
+// //   String _getSynopsis() {
+// //     final overview = widget.movie['overview']?.toString();
+// //     if (overview != null && overview.isNotEmpty) {
+// //       return overview;
+// //     }
+// //     return "No synopsis available.";
+// //   }
+// // }
+
+// // class _MetaBadge extends StatelessWidget {
+// //   final IconData icon;
+// //   final String label;
+// //   final Color? color;
+
+// //   const _MetaBadge({required this.icon, required this.label, this.color});
+
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return Row(
+// //       mainAxisSize: MainAxisSize.min,
+// //       children: [
+// //         Icon(icon, color: color ?? Colors.grey[400], size: 14),
+// //         const SizedBox(width: 4),
+// //         Text(
+// //           label,
+// //           style: TextStyle(
+// //             fontSize: 13,
+// //             color: color ?? Colors.grey[300],
+// //             fontWeight: FontWeight.w600,
+// //           ),
+// //         ),
+// //       ],
+// //     );
+// //   }
+// // }
+
+// // class _NavButton extends StatelessWidget {
+// //   final IconData icon;
+// //   final String label;
+// //   final VoidCallback onTap;
+
+// //   const _NavButton({
+// //     required this.icon,
+// //     required this.label,
+// //     required this.onTap,
+// //   });
+
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return GestureDetector(
+// //       onTap: onTap,
+// //       child: Container(
+// //         padding: const EdgeInsets.symmetric(vertical: 12),
+// //         decoration: BoxDecoration(
+// //           color: Colors.white.withOpacity(0.08),
+// //           borderRadius: BorderRadius.circular(12),
+// //         ),
+// //         child: Row(
+// //           mainAxisAlignment: MainAxisAlignment.center,
+// //           children: [
+// //             Icon(icon, color: Colors.white, size: 20),
+// //             const SizedBox(width: 8),
+// //             Text(
+// //               label,
+// //               style: const TextStyle(
+// //                 color: Colors.white,
+// //                 fontSize: 13,
+// //                 fontWeight: FontWeight.w600,
+// //               ),
+// //             ),
+// //           ],
+// //         ),
+// //       ),
+// //     );
+// //   }
+// // }
+
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:practice_ui/apps/movieapp/widgets/movie_trend.dart';
 // import 'package:webview_flutter/webview_flutter.dart';
 
-// class VidkingPlayerPage extends StatefulWidget {
-//   final Map<String, dynamic> movie; // <-- Change from MovieModel to Map
+// class VidsrcPlayerPage extends StatefulWidget {
+//   final Map<String, dynamic> movie;
 //   final int season;
 //   final int episode;
 
-//   const VidkingPlayerPage({
+//   const VidsrcPlayerPage({
 //     super.key,
 //     required this.movie,
 //     this.season = 1,
@@ -16,693 +673,804 @@
 //   });
 
 //   @override
-//   State<VidkingPlayerPage> createState() => _VidkingPlayerPageState();
+//   State<VidsrcPlayerPage> createState() => _VidsrcPlayerPageState();
 // }
 
-// class _VidkingPlayerPageState extends State<VidkingPlayerPage> {
+// class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
+//     with WidgetsBindingObserver {
 //   late final WebViewController _controller;
-//   bool _showControls = true;
 //   bool _isLoading = true;
-//   int _currentSeason;
-//   int _currentEpisode;
-//   double _volume = 1.0;
+//   bool _isFullscreen = false;
+//   int _activeSeason = 1;
+//   int _activeEpisode = 1;
 
-//   _VidkingPlayerPageState() : _currentSeason = 1, _currentEpisode = 1;
+//   // Allowed domains
+//   static const List<String> _allowedHosts = [
+//     'vidsrcme.ru',
+//     'cloudorchestranova.com',
+//     'cdn.vidsrc.me',
+//     'vidsrc.me',
+//     'vidsrc.dev',
+//     'vidsrc.to',
+//     'vidsrc.in',
+//     'vidsrc.net',
+//     'vidsrc.xyz',
+//     'vidsrc.cc',
+//     'vidsrc.io',
+//     'vidsrc.pm',
+//     'vidsrc.vc',
+//     'vidsrc.su',
+//     'vidsrc.pro',
+//     'vidsrc.tv',
+//     'vidsrc.stream',
+//     'vidsrc.click',
+//     'vidsrc.icu',
+//   ];
 
 //   @override
 //   void initState() {
 //     super.initState();
-//     _currentSeason = widget.season;
-//     _currentEpisode = widget.episode;
+//     WidgetsBinding.instance.addObserver(this);
+//     _activeSeason = widget.season;
+//     _activeEpisode = widget.episode;
 //     _initWebView();
 //   }
 
-//   // Replace MovieModel getters with map lookups:
 //   String get _title =>
 //       widget.movie['title'] ?? widget.movie['name'] ?? 'Unknown';
-//   int get _id => widget.movie['id'] ?? 0;
+
+//   String get _id {
+//     final imdb = widget.movie['imdb_id'];
+//     if (imdb != null && imdb.toString().isNotEmpty) {
+//       return imdb.toString();
+//     }
+//     return widget.movie['id']?.toString() ?? '';
+//   }
+
 //   bool get _isMovie => widget.movie['title'] != null;
 
-//   String get _vidkingUrl {
-//     if (_isMovie) {
-//       return 'https://www.vidking.net/embed/movie/$_id?color=7C3AED&autoPlay=true';
+//   int get _currentSeason => _activeSeason;
+//   int get _currentEpisode => _activeEpisode;
+
+//   String get _vidsrcUrl {
+//     if (_id.isEmpty) {
+//       debugPrint('ERROR: No ID available for VidSrc');
+//       return '';
 //     }
-//     return 'https://www.vidking.net/embed/tv/$_id/$currentSeason/$currentEpisode?color=7C3AED&autoPlay=true&nextEpisode=true&episodeSelector=true';
+//     if (_isMovie) {
+//       return 'https://vidsrcme.ru/embed/movie/$_id?autoplay=1';
+//     }
+//     if (_currentSeason > 0 && _currentEpisode > 0) {
+//       return 'https://vidsrcme.ru/embed/tv/$_id/$_currentSeason/$_currentEpisode?autoplay=1&autonext=1';
+//     }
+//     return 'https://vidsrcme.ru/embed/tv/$_id?autoplay=1&autonext=1';
+//   }
+
+//   String get _vidsrcUrlWithResume {
+//     String url = _vidsrcUrl;
+//     if (url.isEmpty) return url;
+//     final savedProgress = _getSavedProgress();
+//     if (savedProgress > 30) {
+//       final separator = url.contains('?') ? '&' : '?';
+//       url = '$url${separator}startAt=${savedProgress.toInt()}';
+//     }
+//     return url;
+//   }
+
+//   double _getSavedProgress() {
+//     final saved = widget.movie['_savedProgress'];
+//     if (saved != null) return (saved as num).toDouble();
+//     return 0.0;
+//   }
+
+//   void _saveProgress(double progress) {
+//     widget.movie['_savedProgress'] = progress;
 //   }
 
 //   void _initWebView() {
+//     final url = _vidsrcUrlWithResume;
+//     if (url.isEmpty) {
+//       setState(() => _isLoading = false);
+//       return;
+//     }
+
 //     _controller = WebViewController()
 //       ..setJavaScriptMode(JavaScriptMode.unrestricted)
 //       ..setBackgroundColor(Colors.black)
 //       ..setNavigationDelegate(
 //         NavigationDelegate(
-//           onPageFinished: (_) => setState(() => _isLoading = false),
-//           onWebResourceError: (_) => setState(() => _isLoading = false),
+//           onPageFinished: (_) {
+//             setState(() => _isLoading = false);
+//             _injectPostMessageListener();
+//             _blockAdsAndPopups();
+//             _autoClickPlayButton();
+//           },
+//           onWebResourceError: (error) {
+//             debugPrint('WebView error: ${error.description}');
+//           },
+//           onNavigationRequest: (request) {
+//             final uri = Uri.parse(request.url);
+//             final host = uri.host.toLowerCase();
+//             final isAllowed = _allowedHosts.any((h) => host.contains(h));
+//             if (!isAllowed) {
+//               debugPrint('BLOCKED redirect to: ${request.url}');
+//               return NavigationDecision.prevent;
+//             }
+//             return NavigationDecision.navigate;
+//           },
 //         ),
 //       )
-//       ..loadRequest(Uri.parse(_vidkingUrl));
+//       ..loadRequest(Uri.parse(url));
 //   }
 
-//   void _reloadWithEpisode(int season, int episode) {
+//   // Auto-click VidSrc's play button since autoplay=1 still shows a button on free domains
+//   void _autoClickPlayButton() {
+//     const js = """
+//       (function() {
+//         function clickPlay() {
+//           const playBtn = document.querySelector('.play-button, .vjs-big-play-button, [class*=\"play\"], button[title*=\"Play\"]');
+//           if (playBtn) {
+//             playBtn.click();
+//             console.log('Auto-clicked play button');
+//             return true;
+//           }
+//           const video = document.querySelector('video');
+//           if (video && video.paused) {
+//             video.play();
+//             console.log('Auto-played video element');
+//             return true;
+//           }
+//           return false;
+//         }
+//         clickPlay();
+//         setTimeout(clickPlay, 500);
+//         setTimeout(clickPlay, 1500);
+//         setTimeout(clickPlay, 3000);
+//       })();
+//     """;
+//     _controller.runJavaScript(js);
+//   }
+
+//   void _blockAdsAndPopups() {
+//     const js = """
+//       (function() {
+//         'use strict';
+//         window.open = function() {
+//           console.log('BLOCKED: window.open popup');
+//           return null;
+//         };
+//         document.addEventListener('click', function(e) {
+//           const target = e.target.closest('a');
+//           if (target) {
+//             const href = target.href || '';
+//             const allowed = ['vidsrc', 'cloudorchestranova', 'javascript:', '#'];
+//             const isAllowed = allowed.some(function(a) { return href.includes(a); });
+//             if (!isAllowed) {
+//               console.log('BLOCKED click to:', href);
+//               e.preventDefault();
+//               e.stopPropagation();
+//               return false;
+//             }
+//           }
+//         }, true);
+//         function removeAds() {
+//           const selectors = [
+//             'iframe[src*=\"aliexpress\"]',
+//             'iframe[src*=\"advertising\"]',
+//             'iframe[src*=\"ads\"]',
+//             'iframe[src*=\"popup\"]',
+//             'iframe[src*=\"click\"]',
+//             'iframe[src*=\"banner\"]',
+//             'div[class*=\"ad\"]',
+//             'div[id*=\"ad\"]',
+//             'div[class*=\"popup\"]',
+//             'div[id*=\"popup\"]',
+//             'div[class*=\"banner\"]',
+//             'div[id*=\"banner\"]',
+//             'a[target=\"_blank\"]',
+//             '[onclick*=\"window.open\"]',
+//           ];
+//           selectors.forEach(function(selector) {
+//             document.querySelectorAll(selector).forEach(function(el) {
+//               console.log('REMOVED ad element:', selector);
+//               el.remove();
+//             });
+//           });
+//         }
+//         removeAds();
+//         const observer = new MutationObserver(removeAds);
+//         observer.observe(document.body, { childList: true, subtree: true });
+//         const originalReplace = window.location.replace;
+//         window.location.replace = function(url) {
+//           const allowed = ['vidsrc', 'cloudorchestranova'];
+//           if (allowed.some(function(a) { return url.includes(a); })) {
+//             return originalReplace.call(window.location, url);
+//           }
+//           console.log('BLOCKED location.replace to:', url);
+//         };
+//         window.onbeforeunload = null;
+//         console.log('Ad blocker injected successfully');
+//       })();
+//     """;
+//     _controller.runJavaScript(js);
+//   }
+
+//   void _injectPostMessageListener() {
+//     const jsCode = """
+//       (function() {
+//         window.addEventListener('message', function(event) {
+//           if (event.data && event.data.type === 'PLAYER_EVENT') {
+//             const data = event.data.data;
+//             console.log('VIDSRC_EVENT:' + JSON.stringify(data));
+//           }
+//         });
+//       })();
+//     """;
+//     _controller.runJavaScript(jsCode);
+//   }
+
+//   void _handlePlayerEvent(Map<String, dynamic> data) {
+//     final status = data['player_status']?.toString();
+//     final progress = (data['player_progress'] as num?)?.toDouble() ?? 0.0;
+//     if (status == 'playing' && progress > 0) {
+//       _saveProgress(progress);
+//     }
+//   }
+
+//   void _listenForFullscreenChanges() {
+//     const js = """
+//       (function() {
+//         document.addEventListener('fullscreenchange', function() {
+//           const isFullscreen = !!document.fullscreenElement;
+//           console.log('FULLSCREEN_CHANGE:' + isFullscreen);
+//         });
+//       })();
+//     """;
+//     _controller.runJavaScript(js);
+//   }
+
+//   void _loadEpisode(int season, int episode) {
 //     setState(() {
-//       _currentSeason = season;
-//       _currentEpisode = episode;
+//       _activeSeason = season;
+//       _activeEpisode = episode;
 //       _isLoading = true;
 //     });
-//     _controller.loadRequest(Uri.parse(_vidkingUrl));
+//     final newUrl = _vidsrcUrl;
+//     _controller.loadRequest(Uri.parse(newUrl));
 //   }
 
-//   void _toggleControls() {
-//     setState(() => _showControls = !_showControls);
+//   @override
+//   void didChangeAppLifecycleState(AppLifecycleState state) {}
+
+//   @override
+//   void dispose() {
+//     WidgetsBinding.instance.removeObserver(this);
+//     SystemChrome.setPreferredOrientations([
+//       DeviceOrientation.portraitUp,
+//       DeviceOrientation.portraitDown,
+//     ]);
+//     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+//     _controller.clearCache();
+//     super.dispose();
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       backgroundColor: Colors.black,
-//       body: GestureDetector(
-//         onTap: _toggleControls,
-//         child: Stack(
-//           fit: StackFit.expand,
-//           children: [
-//             // WebView Player
-//             WebViewWidget(controller: _controller),
-
-//             // Loading Indicator
-//             if (_isLoading)
-//               Container(
-//                 color: Colors.black,
-//                 child: const Center(
-//                   child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
-//                 ),
-//               ),
-
-//             // Controls Overlay
-//             if (_showControls) ...[
-//               // Top Bar
-//               _buildTopBar(),
-
-//               // Center Play/Pause (Vidking handles this, but we show a hint)
-//               if (!_isLoading)
-//                 Center(
-//                   child: Container(
-//                     width: 72,
-//                     height: 72,
-//                     decoration: BoxDecoration(
-//                       color: Colors.white.withOpacity(0.15),
-//                       shape: BoxShape.circle,
-//                       border: Border.all(color: Colors.white.withOpacity(0.3)),
-//                     ),
-//                     child: const Icon(
-//                       Icons.touch_app,
-//                       color: Colors.white54,
-//                       size: 32,
-//                     ),
-//                   ),
-//                 ),
-
-//               // Bottom Controls
-//               _buildBottomControls(),
-//             ],
-//           ],
-//         ),
-//       ),
+//       body: _isFullscreen ? _buildFullscreenView() : _buildPortraitView(),
 //     );
 //   }
 
-//   Widget _buildTopBar() {
+//   // PORTRAIT: Video centered at top, movie info below
+//   Widget _buildPortraitView() {
 //     return SafeArea(
-//       child: Container(
-//         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//         decoration: BoxDecoration(
-//           gradient: LinearGradient(
-//             begin: Alignment.topCenter,
-//             end: Alignment.bottomCenter,
-//             colors: [Colors.black.withOpacity(0.8), Colors.transparent],
-//           ),
-//         ),
-//         child: Row(
-//           children: [
-//             _ControlButton(
-//               icon: Icons.arrow_back_ios_new_rounded,
-//               onTap: () => Navigator.pop(context),
-//             ),
-//             const SizedBox(width: 12),
-//             Expanded(
-//               child: Text(
-//                 widget.movie.displayTitle,
-//                 style: const TextStyle(
-//                   color: Colors.white,
-//                   fontSize: 16,
-//                   fontWeight: FontWeight.w600,
-//                 ),
-//                 maxLines: 1,
-//                 overflow: TextOverflow.ellipsis,
-//               ),
-//             ),
-//             _ControlButton(
-//               icon: Icons.cast,
-//               onTap: () {}, // Chromecast/AirPlay
-//             ),
-//             const SizedBox(width: 8),
-//             _ControlButton(
-//               icon: Icons.settings_outlined,
-//               onTap: _showSettingsMenu,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+//       child: Column(
+//         children: [
+//           // Top App Bar
+//           _buildAppBar(),
 
-//   Widget _buildBottomControls() {
-//     return Positioned(
-//       bottom: 0,
-//       left: 0,
-//       right: 0,
-//       child: SafeArea(
-//         child: Container(
-//           padding: const EdgeInsets.all(16),
-//           decoration: BoxDecoration(
-//             gradient: LinearGradient(
-//               begin: Alignment.bottomCenter,
-//               end: Alignment.topCenter,
-//               colors: [Colors.black.withOpacity(0.9), Colors.transparent],
-//             ),
-//           ),
-//           child: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               // Progress bar (decorative - Vidking handles actual seeking)
-//               Container(
-//                 height: 3,
-//                 decoration: BoxDecoration(
-//                   color: Colors.white.withOpacity(0.3),
-//                   borderRadius: BorderRadius.circular(2),
-//                 ),
-//                 child: FractionallySizedBox(
-//                   alignment: Alignment.centerLeft,
-//                   widthFactor:
-//                       0.3, // Placeholder - would need JS bridge for real progress
-//                   child: Container(
-//                     decoration: const BoxDecoration(
-//                       color: Color(0xFF7C3AED),
-//                       borderRadius: BorderRadius.all(Radius.circular(2)),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(height: 16),
-
-//               // Control Buttons Row
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//           // Video Player
+//           AspectRatio(
+//             aspectRatio: 16 / 9,
+//             child: Container(
+//               color: Colors.black,
+//               child: Stack(
+//                 fit: StackFit.expand,
 //                 children: [
-//                   // Subtitles
-//                   _ControlButton(
-//                     icon: Icons.subtitles_outlined,
-//                     label: 'CC',
-//                     onTap: _showSubtitleOptions,
-//                   ),
-
-//                   // Skip Backward 10s
-//                   _ControlButton(
-//                     icon: Icons.replay_10_rounded,
-//                     size: 32,
-//                     onTap: () => _seek(-10),
-//                   ),
-
-//                   // Play/Pause (handled by Vidking, this is visual)
-//                   Container(
-//                     width: 56,
-//                     height: 56,
-//                     decoration: BoxDecoration(
-//                       color: const Color(0xFF7C3AED),
-//                       shape: BoxShape.circle,
-//                       boxShadow: [
-//                         BoxShadow(
-//                           color: const Color(0xFF7C3AED).withOpacity(0.4),
-//                           blurRadius: 20,
-//                           spreadRadius: 2,
+//                   WebViewWidget(controller: _controller),
+//                   if (_isLoading)
+//                     Container(
+//                       color: Colors.black,
+//                       child: const Center(
+//                         child: CircularProgressIndicator(
+//                           color: Color(0xFF7C3AED),
 //                         ),
-//                       ],
-//                     ),
-//                     child: const Icon(
-//                       Icons.play_arrow_rounded,
-//                       color: Colors.white,
-//                       size: 32,
-//                     ),
-//                   ),
-
-//                   // Skip Forward 10s
-//                   _ControlButton(
-//                     icon: Icons.forward_10_rounded,
-//                     size: 32,
-//                     onTap: () => _seek(10),
-//                   ),
-
-//                   // Episodes (TV only)
-//                   if (!widget.movie.isMovie)
-//                     _ControlButton(
-//                       icon: Icons.list_rounded,
-//                       label: 'Eps',
-//                       onTap: _showEpisodeSelector,
-//                     )
-//                   else
-//                     _ControlButton(
-//                       icon: Icons.fullscreen_rounded,
-//                       onTap: _toggleFullscreen,
+//                       ),
 //                     ),
 //                 ],
 //               ),
-//               const SizedBox(height: 12),
-
-//               // Secondary Row: Volume, Quality, Server
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 children: [
-//                   _ControlButton(
-//                     icon: _volume > 0 ? Icons.volume_up : Icons.volume_off,
-//                     onTap: _toggleMute,
-//                   ),
-//                   _ControlButton(
-//                     icon: Icons.hd_outlined,
-//                     label: 'Auto',
-//                     onTap: _showQualitySelector,
-//                   ),
-//                   _ControlButton(
-//                     icon: Icons.dns_rounded,
-//                     label: 'Server',
-//                     onTap: _showServerSelector,
-//                   ),
-//                   if (!widget.movie.isMovie)
-//                     _ControlButton(
-//                       icon: Icons.fullscreen_rounded,
-//                       onTap: _toggleFullscreen,
-//                     ),
-//                 ],
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   // ── Control Actions ──
-//   void _seek(int seconds) {
-//     // Vidking doesn't expose JS API for seeking directly
-//     // You'd need to inject JavaScript or use postMessage
-//     _controller.runJavaScript('''
-//       try {
-//         const video = document.querySelector('video');
-//         if (video) video.currentTime += $seconds;
-//       } catch(e) {}
-//     ''');
-//   }
-
-//   void _toggleMute() {
-//     setState(() => _volume = _volume > 0 ? 0 : 1);
-//     _controller.runJavaScript('''
-//       try {
-//         const video = document.querySelector('video');
-//         if (video) video.muted = ${_volume == 0};
-//       } catch(e) {}
-//     ''');
-//   }
-
-//   void _toggleFullscreen() {
-//     _controller.runJavaScript('''
-//       try {
-//         const video = document.querySelector('video');
-//         if (video) {
-//           if (document.fullscreenElement) {
-//             document.exitFullscreen();
-//           } else {
-//             video.requestFullscreen();
-//           }
-//         }
-//       } catch(e) {}
-//     ''');
-//   }
-
-//   // ── Bottom Sheets ──
-//   void _showEpisodeSelector() {
-//     showModalBottomSheet(
-//       context: context,
-//       backgroundColor: const Color(0xFF1C1C1C),
-//       shape: const RoundedRectangleBorder(
-//         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//       ),
-//       builder: (context) => _EpisodeSelector(
-//         movie: widget.movie,
-//         currentSeason: _currentSeason,
-//         currentEpisode: _currentEpisode,
-//         onSelect: (s, e) {
-//           Navigator.pop(context);
-//           _reloadWithEpisode(s, e);
-//         },
-//       ),
-//     );
-//   }
-
-//   void _showQualitySelector() {
-//     showModalBottomSheet(
-//       context: context,
-//       backgroundColor: const Color(0xFF1C1C1C),
-//       shape: const RoundedRectangleBorder(
-//         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//       ),
-//       builder: (context) => _QualitySelector(
-//         qualities: const ['Auto', '4K', '1080p', '720p', '480p', '360p'],
-//         onSelect: (q) => Navigator.pop(context),
-//       ),
-//     );
-//   }
-
-//   void _showServerSelector() {
-//     showModalBottomSheet(
-//       context: context,
-//       backgroundColor: const Color(0xFF1C1C1C),
-//       shape: const RoundedRectangleBorder(
-//         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//       ),
-//       builder: (context) => _ServerSelector(
-//         servers: const ['Vidking', 'Server 2', 'Server 3'],
-//         onSelect: (s) => Navigator.pop(context),
-//       ),
-//     );
-//   }
-
-//   void _showSubtitleOptions() {
-//     showModalBottomSheet(
-//       context: context,
-//       backgroundColor: const Color(0xFF1C1C1C),
-//       shape: const RoundedRectangleBorder(
-//         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//       ),
-//       builder: (context) => _SubtitleSelector(
-//         subtitles: const ['Off', 'English', 'Spanish', 'French', 'German'],
-//         onSelect: (s) => Navigator.pop(context),
-//       ),
-//     );
-//   }
-
-//   void _showSettingsMenu() {
-//     showModalBottomSheet(
-//       context: context,
-//       backgroundColor: const Color(0xFF1C1C1C),
-//       builder: (context) => SafeArea(
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             ListTile(
-//               leading: const Icon(Icons.speed, color: Colors.white),
-//               title: const Text(
-//                 'Playback Speed',
-//                 style: TextStyle(color: Colors.white),
-//               ),
-//               trailing: const Text(
-//                 '1.0x',
-//                 style: TextStyle(color: Colors.grey),
-//               ),
-//               onTap: () {},
-//             ),
-//             ListTile(
-//               leading: const Icon(Icons.subtitles, color: Colors.white),
-//               title: const Text(
-//                 'Subtitles',
-//                 style: TextStyle(color: Colors.white),
-//               ),
-//               onTap: () {
-//                 Navigator.pop(context);
-//                 _showSubtitleOptions();
-//               },
-//             ),
-//             ListTile(
-//               leading: const Icon(Icons.hd, color: Colors.white),
-//               title: const Text(
-//                 'Quality',
-//                 style: TextStyle(color: Colors.white),
-//               ),
-//               onTap: () {
-//                 Navigator.pop(context);
-//                 _showQualitySelector();
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   void dispose() {
-//     _controller.clearCache();
-//     super.dispose();
-//   }
-// }
-
-// // ─── Helper Widgets ─────────────────────────────────────────────
-
-// class _ControlButton extends StatelessWidget {
-//   final IconData icon;
-//   final String? label;
-//   final double size;
-//   final VoidCallback onTap;
-
-//   const _ControlButton({
-//     required this.icon,
-//     this.label,
-//     this.size = 24,
-//     required this.onTap,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onTap,
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           Icon(icon, color: Colors.white, size: size),
-//           if (label != null) ...[
-//             const SizedBox(height: 2),
-//             Text(
-//               label!,
-//               style: const TextStyle(color: Colors.white70, fontSize: 10),
-//             ),
-//           ],
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// // ─── Bottom Sheet Widgets ─────────────────────────────────────
-
-// class _EpisodeSelector extends StatelessWidget {
-//   final MovieModel movie;
-//   final int currentSeason;
-//   final int currentEpisode;
-//   final Function(int season, int episode) onSelect;
-
-//   const _EpisodeSelector({
-//     required this.movie,
-//     required this.currentSeason,
-//     required this.currentEpisode,
-//     required this.onSelect,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return DefaultTabController(
-//       length: movie.seasons.length,
-//       initialIndex: movie.seasons
-//           .indexWhere((s) => s.seasonNumber == currentSeason)
-//           .clamp(0, movie.seasons.length - 1),
-//       child: Column(
-//         children: [
-//           Container(
-//             padding: const EdgeInsets.all(16),
-//             child: const Text(
-//               'Episodes',
-//               style: TextStyle(
-//                 color: Colors.white,
-//                 fontSize: 18,
-//                 fontWeight: FontWeight.bold,
-//               ),
 //             ),
 //           ),
-//           TabBar(
-//             isScrollable: true,
-//             labelColor: const Color(0xFF7C3AED),
-//             unselectedLabelColor: Colors.grey,
-//             indicatorColor: const Color(0xFF7C3AED),
-//             tabs: movie.seasons.map((s) => Tab(text: s.name)).toList(),
-//           ),
+
+//           // Movie info below video (scrollable)
 //           Expanded(
-//             child: TabBarView(
-//               children: movie.seasons.map((season) {
-//                 return ListView.builder(
-//                   itemCount: season.episodeCount,
-//                   itemBuilder: (context, index) {
-//                     final ep = index + 1;
-//                     final isCurrent =
-//                         season.seasonNumber == currentSeason &&
-//                         ep == currentEpisode;
-//                     return ListTile(
-//                       leading: Container(
-//                         width: 40,
-//                         height: 40,
-//                         decoration: BoxDecoration(
-//                           color: isCurrent
-//                               ? const Color(0xFF7C3AED)
-//                               : Colors.grey.shade800,
-//                           borderRadius: BorderRadius.circular(8),
+//             child: SingleChildScrollView(
+//               padding: const EdgeInsets.all(16),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     _title,
+//                     style: const TextStyle(
+//                       color: Colors.white,
+//                       fontSize: 22,
+//                       fontWeight: FontWeight.bold,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 8),
+//                   Row(
+//                     children: [
+//                       _MetaBadge(
+//                         icon: Icons.star_rounded,
+//                         label: _getRating(),
+//                         color: Colors.amber,
+//                       ),
+//                       const SizedBox(width: 12),
+//                       _MetaBadge(
+//                         icon: Icons.calendar_today_rounded,
+//                         label: _getYear(),
+//                       ),
+//                       const SizedBox(width: 12),
+//                       Container(
+//                         padding: const EdgeInsets.symmetric(
+//                           horizontal: 8,
+//                           vertical: 3,
 //                         ),
-//                         child: Center(
-//                           child: Text(
-//                             '$ep',
-//                             style: TextStyle(
-//                               color: isCurrent ? Colors.white : Colors.grey,
-//                               fontWeight: FontWeight.bold,
-//                             ),
+//                         decoration: BoxDecoration(
+//                           color: Colors.white.withOpacity(0.1),
+//                           borderRadius: BorderRadius.circular(6),
+//                         ),
+//                         child: const Text(
+//                           'HD',
+//                           style: TextStyle(
+//                             fontSize: 11,
+//                             fontWeight: FontWeight.w700,
+//                             color: Colors.white,
 //                           ),
 //                         ),
 //                       ),
-//                       title: Text(
-//                         'Episode $ep',
-//                         style: TextStyle(
-//                           color: isCurrent
-//                               ? const Color(0xFF7C3AED)
-//                               : Colors.white,
-//                           fontWeight: isCurrent
-//                               ? FontWeight.bold
-//                               : FontWeight.normal,
-//                         ),
-//                       ),
-//                       trailing: isCurrent
-//                           ? const Icon(
-//                               Icons.play_arrow,
-//                               color: Color(0xFF7C3AED),
-//                             )
-//                           : null,
-//                       onTap: () => onSelect(season.seasonNumber, ep),
-//                     );
-//                   },
-//                 );
-//               }).toList(),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 16),
+
+//                   // Synopsis
+//                   Text(
+//                     'Synopsis',
+//                     style: TextStyle(
+//                       color: Colors.grey[400],
+//                       fontSize: 14,
+//                       fontWeight: FontWeight.w600,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 8),
+//                   Text(
+//                     _getSynopsis(),
+//                     style: TextStyle(
+//                       color: Colors.grey[500],
+//                       fontSize: 14,
+//                       height: 1.6,
+//                     ),
+//                   ),
+
+//                   const SizedBox(height: 24),
+
+//                   // Episodes section (TV only) OR MovieTrend() for movies
+//                   if (!_isMovie) ...[
+//                     _buildSeasonSelector(),
+//                     const SizedBox(height: 16),
+//                     _buildEpisodesList(),
+//                   ] else ...[
+//                     // For movies, use the imported MovieTrend widget
+//                     MovieTrend(),
+//                   ],
+//                 ],
+//               ),
 //             ),
 //           ),
 //         ],
 //       ),
 //     );
 //   }
-// }
 
-// class _QualitySelector extends StatelessWidget {
-//   final List<String> qualities;
-//   final Function(String) onSelect;
+//   // Season selector tabs (S1, S2, S3...)
+//   Widget _buildSeasonSelector() {
+//     // Get number of seasons from movie data, default to 3
+//     final seasonCount = (widget.movie['number_of_seasons'] as int?) ?? 3;
 
-//   const _QualitySelector({required this.qualities, required this.onSelect});
-
-//   @override
-//   Widget build(BuildContext context) {
 //     return Column(
-//       mainAxisSize: MainAxisSize.min,
+//       crossAxisAlignment: CrossAxisAlignment.start,
 //       children: [
-//         const Padding(
-//           padding: EdgeInsets.all(16),
-//           child: Text(
-//             'Quality',
-//             style: TextStyle(
-//               color: Colors.white,
-//               fontSize: 18,
-//               fontWeight: FontWeight.bold,
-//             ),
+//         const Text(
+//           'Seasons',
+//           style: TextStyle(
+//             color: Colors.white,
+//             fontSize: 18,
+//             fontWeight: FontWeight.bold,
 //           ),
 //         ),
-//         ...qualities.map(
-//           (q) => ListTile(
-//             title: Text(q, style: const TextStyle(color: Colors.white)),
-//             trailing: q == 'Auto'
-//                 ? const Icon(Icons.check, color: Color(0xFF7C3AED))
-//                 : null,
-//             onTap: () => onSelect(q),
+//         const SizedBox(height: 12),
+//         SingleChildScrollView(
+//           scrollDirection: Axis.horizontal,
+//           child: Row(
+//             children: List.generate(seasonCount, (index) {
+//               final seasonNum = index + 1;
+//               final isActive = seasonNum == _activeSeason;
+//               return Padding(
+//                 padding: const EdgeInsets.only(right: 10),
+//                 child: GestureDetector(
+//                   onTap: () {
+//                     setState(() => _activeSeason = seasonNum);
+//                     _loadEpisode(seasonNum, 1);
+//                   },
+//                   child: Container(
+//                     padding: const EdgeInsets.symmetric(
+//                       horizontal: 20,
+//                       vertical: 10,
+//                     ),
+//                     decoration: BoxDecoration(
+//                       color: isActive
+//                           ? const Color(0xFF7C3AED)
+//                           : Colors.white.withOpacity(0.08),
+//                       borderRadius: BorderRadius.circular(10),
+//                     ),
+//                     child: Text(
+//                       'S$seasonNum',
+//                       style: TextStyle(
+//                         color: Colors.white,
+//                         fontSize: 14,
+//                         fontWeight: isActive
+//                             ? FontWeight.w700
+//                             : FontWeight.w500,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               );
+//             }),
 //           ),
 //         ),
 //       ],
 //     );
 //   }
-// }
 
-// class _ServerSelector extends StatelessWidget {
-//   final List<String> servers;
-//   final Function(String) onSelect;
+//   // Episode list matching the image design
+//   Widget _buildEpisodesList() {
+//     // Get episodes from movie data, or generate placeholders
+//     final episodes = _getEpisodesForSeason(_activeSeason);
 
-//   const _ServerSelector({required this.servers, required this.onSelect});
-
-//   @override
-//   Widget build(BuildContext context) {
 //     return Column(
-//       mainAxisSize: MainAxisSize.min,
+//       crossAxisAlignment: CrossAxisAlignment.start,
 //       children: [
-//         const Padding(
-//           padding: EdgeInsets.all(16),
-//           child: Text(
-//             'Select Server',
-//             style: TextStyle(
-//               color: Colors.white,
-//               fontSize: 18,
-//               fontWeight: FontWeight.bold,
+//         const Text(
+//           'Episodes',
+//           style: TextStyle(
+//             color: Colors.white,
+//             fontSize: 18,
+//             fontWeight: FontWeight.bold,
+//           ),
+//         ),
+//         const SizedBox(height: 12),
+//         ...episodes.map((ep) => _buildEpisodeItem(ep)),
+//       ],
+//     );
+//   }
+
+//   List<Map<String, dynamic>> _getEpisodesForSeason(int season) {
+//     // Try to get episodes from movie data
+//     final seasons = widget.movie['seasons'] as List<dynamic>?;
+//     if (seasons != null) {
+//       final seasonData = seasons.firstWhere(
+//         (s) => (s['season_number'] ?? s['number']) == season,
+//         orElse: () => null,
+//       );
+//       if (seasonData != null && seasonData['episodes'] != null) {
+//         return (seasonData['episodes'] as List).cast<Map<String, dynamic>>();
+//       }
+//     }
+
+//     // Fallback: generate placeholder episodes
+//     final episodeCount = widget.movie['number_of_episodes'] ?? 6;
+//     return List.generate(
+//       episodeCount,
+//       (index) => {
+//         'episode_number': index + 1,
+//         'name': 'Episode ${index + 1}',
+//         'overview': 'Episode ${index + 1} of Season $season',
+//         'runtime': 45,
+//         'still_path': null,
+//       },
+//     );
+//   }
+
+//   Widget _buildEpisodeItem(Map<String, dynamic> episode) {
+//     final epNum = episode['episode_number'] ?? episode['number'] ?? 1;
+//     final title = episode['name'] ?? episode['title'] ?? 'Episode $epNum';
+//     final subtitle = episode['overview']?.toString().isNotEmpty == true
+//         ? episode['overview'].toString()
+//         : 'Episode $epNum';
+//     final runtime = episode['runtime'] ?? episode['duration'] ?? 45;
+//     final stillPath = episode['still_path'];
+//     final isActive = epNum == _activeEpisode;
+
+//     // Purple-ish background for active playing episode
+//     final activeBgColor = const Color(0xFF7C3AED).withOpacity(0.15);
+//     final activeBorderColor = const Color(0xFF7C3AED).withOpacity(0.4);
+
+//     return GestureDetector(
+//       onTap: () => _loadEpisode(_activeSeason, epNum as int),
+//       child: Container(
+//         margin: const EdgeInsets.only(bottom: 12),
+//         padding: const EdgeInsets.all(12),
+//         decoration: BoxDecoration(
+//           color: isActive ? activeBgColor : Colors.transparent,
+//           borderRadius: BorderRadius.circular(12),
+//           border: isActive
+//               ? Border.all(color: activeBorderColor, width: 1)
+//               : null,
+//         ),
+//         child: Row(
+//           children: [
+//             // Thumbnail
+//             ClipRRect(
+//               borderRadius: BorderRadius.circular(8),
+//               child: Container(
+//                 width: 100,
+//                 height: 60,
+//                 color: Colors.grey[900],
+//                 child: stillPath != null
+//                     ? Image.network(
+//                         'https://image.tmdb.org/t/p/w300$stillPath',
+//                         fit: BoxFit.cover,
+//                         errorBuilder: (_, __, ___) =>
+//                             _buildThumbnailFallback(epNum as int),
+//                       )
+//                     : _buildThumbnailFallback(epNum as int),
+//               ),
+//             ),
+//             const SizedBox(width: 12),
+//             // Episode info
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     title,
+//                     style: TextStyle(
+//                       color: Colors.white,
+//                       fontSize: 14,
+//                       fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
+//                     ),
+//                     maxLines: 1,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                   const SizedBox(height: 4),
+//                   Text(
+//                     subtitle,
+//                     style: TextStyle(color: Colors.grey[500], fontSize: 12),
+//                     maxLines: 1,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                   const SizedBox(height: 4),
+//                   Text(
+//                     '$runtime min',
+//                     style: TextStyle(color: Colors.grey[600], fontSize: 11),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             // Download icon
+//             GestureDetector(
+//               onTap: () {
+//                 // Handle download
+//               },
+//               child: Container(
+//                 padding: const EdgeInsets.all(8),
+//                 decoration: BoxDecoration(
+//                   color: Colors.white.withOpacity(0.06),
+//                   shape: BoxShape.circle,
+//                 ),
+//                 child: Icon(
+//                   Icons.download_rounded,
+//                   color: isActive ? const Color(0xFF7C3AED) : Colors.grey[400],
+//                   size: 18,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildThumbnailFallback(int epNum) {
+//     return Stack(
+//       fit: StackFit.expand,
+//       children: [
+//         Container(
+//           color: Colors.grey[850],
+//           child: Center(
+//             child: Icon(
+//               Icons.play_circle_outline,
+//               color: Colors.grey[600],
+//               size: 24,
 //             ),
 //           ),
 //         ),
-//         ...servers.map(
-//           (s) => ListTile(
-//             leading: const Icon(Icons.dns, color: Colors.white70),
-//             title: Text(s, style: const TextStyle(color: Colors.white)),
-//             trailing: s == 'Vidking'
-//                 ? const Icon(Icons.check, color: Color(0xFF7C3AED))
-//                 : null,
-//             onTap: () => onSelect(s),
+//         // Episode number badge
+//         Positioned(
+//           bottom: 4,
+//           left: 4,
+//           child: Container(
+//             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+//             decoration: BoxDecoration(
+//               color: Colors.black.withOpacity(0.7),
+//               borderRadius: BorderRadius.circular(4),
+//             ),
+//             child: Text(
+//               'E$epNum',
+//               style: const TextStyle(
+//                 color: Colors.white,
+//                 fontSize: 10,
+//                 fontWeight: FontWeight.w600,
+//               ),
+//             ),
 //           ),
 //         ),
 //       ],
 //     );
 //   }
-// }
 
-// class _SubtitleSelector extends StatelessWidget {
-//   final List<String> subtitles;
-//   final Function(String) onSelect;
-
-//   const _SubtitleSelector({required this.subtitles, required this.onSelect});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisSize: MainAxisSize.min,
+//   // FULLSCREEN: Video fills entire screen in landscape
+//   Widget _buildFullscreenView() {
+//     return Stack(
+//       fit: StackFit.expand,
 //       children: [
-//         const Padding(
-//           padding: EdgeInsets.all(16),
-//           child: Text(
-//             'Subtitles',
-//             style: TextStyle(
-//               color: Colors.white,
-//               fontSize: 18,
-//               fontWeight: FontWeight.bold,
+//         WebViewWidget(controller: _controller),
+//         if (_isLoading)
+//           Container(
+//             color: Colors.black,
+//             child: const Center(
+//               child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+//             ),
+//           ),
+//         // Exit fullscreen button
+//         Positioned(
+//           top: 16,
+//           left: 16,
+//           child: SafeArea(
+//             child: GestureDetector(
+//               onTap: () {
+//                 setState(() => _isFullscreen = false);
+//                 SystemChrome.setPreferredOrientations([
+//                   DeviceOrientation.portraitUp,
+//                   DeviceOrientation.portraitDown,
+//                 ]);
+//                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+//               },
+//               child: Container(
+//                 padding: const EdgeInsets.all(10),
+//                 decoration: BoxDecoration(
+//                   color: Colors.black.withOpacity(0.5),
+//                   shape: BoxShape.circle,
+//                 ),
+//                 child: const Icon(
+//                   Icons.fullscreen_exit_rounded,
+//                   color: Colors.white,
+//                   size: 24,
+//                 ),
+//               ),
 //             ),
 //           ),
 //         ),
-//         ...subtitles.map(
-//           (s) => ListTile(
-//             title: Text(s, style: const TextStyle(color: Colors.white)),
-//             trailing: s == 'Off'
-//                 ? const Icon(Icons.check, color: Color(0xFF7C3AED))
-//                 : null,
-//             onTap: () => onSelect(s),
+//       ],
+//     );
+//   }
+
+//   Widget _buildAppBar() {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//       child: Row(
+//         children: [
+//           GestureDetector(
+//             onTap: () => Navigator.pop(context),
+//             child: Container(
+//               padding: const EdgeInsets.all(8),
+//               decoration: BoxDecoration(
+//                 color: Colors.white.withOpacity(0.1),
+//                 shape: BoxShape.circle,
+//               ),
+//               child: const Icon(
+//                 Icons.arrow_back_ios_new_rounded,
+//                 color: Colors.white,
+//                 size: 18,
+//               ),
+//             ),
+//           ),
+//           const SizedBox(width: 12),
+//           Expanded(
+//             child: Text(
+//               _isMovie ? 'Now Playing' : 'S$_currentSeason E$_currentEpisode',
+//               style: const TextStyle(
+//                 color: Colors.white,
+//                 fontSize: 16,
+//                 fontWeight: FontWeight.w600,
+//               ),
+//             ),
+//           ),
+//           GestureDetector(
+//             onTap: () {},
+//             child: Container(
+//               padding: const EdgeInsets.all(8),
+//               decoration: BoxDecoration(
+//                 color: Colors.white.withOpacity(0.1),
+//                 shape: BoxShape.circle,
+//               ),
+//               child: const Icon(Icons.cast, color: Colors.white, size: 18),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   String _getRating() {
+//     final rating =
+//         (widget.movie['vote_average'] as num?)?.toDouble() ??
+//         (widget.movie['rating'] as num?)?.toDouble() ??
+//         0.0;
+//     return rating.toStringAsFixed(1);
+//   }
+
+//   String _getYear() {
+//     final date =
+//         widget.movie['release_date'] ?? widget.movie['first_air_date'] ?? '';
+//     if (date.toString().isNotEmpty) {
+//       final parsed = DateTime.tryParse(date.toString());
+//       return parsed?.year.toString() ?? 'TBD';
+//     }
+//     return widget.movie['year']?.toString() ?? 'TBD';
+//   }
+
+//   String _getSynopsis() {
+//     final overview = widget.movie['overview']?.toString();
+//     if (overview != null && overview.isNotEmpty) {
+//       return overview;
+//     }
+//     return "No synopsis available.";
+//   }
+// }
+
+// class _MetaBadge extends StatelessWidget {
+//   final IconData icon;
+//   final String label;
+//   final Color? color;
+
+//   const _MetaBadge({required this.icon, required this.label, this.color});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         Icon(icon, color: color ?? Colors.grey[400], size: 14),
+//         const SizedBox(width: 4),
+//         Text(
+//           label,
+//           style: TextStyle(
+//             fontSize: 13,
+//             color: color ?? Colors.grey[300],
+//             fontWeight: FontWeight.w600,
 //           ),
 //         ),
 //       ],
@@ -711,14 +1479,18 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:practice_ui/apps/movieapp/services/tmdb_service.dart';
+import 'package:practice_ui/apps/movieapp/widgets/movie_trend.dart';
+
 import 'package:webview_flutter/webview_flutter.dart';
 
-class VidkingPlayerPage extends StatefulWidget {
+class VidsrcPlayerPage extends StatefulWidget {
   final Map<String, dynamic> movie;
   final int season;
   final int episode;
 
-  const VidkingPlayerPage({
+  const VidsrcPlayerPage({
     super.key,
     required this.movie,
     this.season = 1,
@@ -726,541 +1498,870 @@ class VidkingPlayerPage extends StatefulWidget {
   });
 
   @override
-  State<VidkingPlayerPage> createState() => _VidkingPlayerPageState();
+  State<VidsrcPlayerPage> createState() => _VidsrcPlayerPageState();
 }
 
-class _VidkingPlayerPageState extends State<VidkingPlayerPage> {
+class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
+    with WidgetsBindingObserver {
   late final WebViewController _controller;
-  bool _showControls = true;
   bool _isLoading = true;
-  int _currentSeason = 1;
-  int _currentEpisode = 1;
-  double _volume = 1.0;
+  bool _isFullscreen = false;
+  int _activeSeason = 1;
+  int _activeEpisode = 1;
+
+  // Episode cache: seasonNumber -> List<episode data>
+  final Map<int, List<Map<String, dynamic>>> _episodeCache = {};
+  bool _episodesLoading = false;
+
+  // Allowed domains
+  static const List<String> _allowedHosts = [
+    'vidsrcme.ru',
+    'cloudorchestranova.com',
+    'cdn.vidsrc.me',
+    'vidsrc.me',
+    'vidsrc.dev',
+    'vidsrc.to',
+    'vidsrc.in',
+    'vidsrc.net',
+    'vidsrc.xyz',
+    'vidsrc.cc',
+    'vidsrc.io',
+    'vidsrc.pm',
+    'vidsrc.vc',
+    'vidsrc.su',
+    'vidsrc.pro',
+    'vidsrc.tv',
+    'vidsrc.stream',
+    'vidsrc.click',
+    'vidsrc.icu',
+  ];
 
   @override
   void initState() {
     super.initState();
-    _currentSeason = widget.season;
-    _currentEpisode = widget.episode;
+    WidgetsBinding.instance.addObserver(this);
+    _activeSeason = widget.season;
+    _activeEpisode = widget.episode;
     _initWebView();
+    _fetchEpisodesForSeason(_activeSeason);
   }
 
-  // Map-based getters
   String get _title =>
       widget.movie['title'] ?? widget.movie['name'] ?? 'Unknown';
-  int get _id => widget.movie['id'] ?? 0;
+
+  String get _id {
+    final imdb = widget.movie['imdb_id'];
+    if (imdb != null && imdb.toString().isNotEmpty) {
+      return imdb.toString();
+    }
+    return widget.movie['id']?.toString() ?? '';
+  }
+
   bool get _isMovie => widget.movie['title'] != null;
 
-  String get _vidkingUrl {
-    if (_isMovie) {
-      return 'https://www.vidking.net/embed/movie/$_id?color=7C3AED&autoPlay=true';
+  int get _currentSeason => _activeSeason;
+  int get _currentEpisode => _activeEpisode;
+
+  /// Main movie poster/backdrop to use as episode thumbnail fallback
+  String? get _fallbackImagePath {
+    final poster = widget.movie['poster_path']?.toString();
+    if (poster != null && poster.isNotEmpty) return poster;
+    final backdrop = widget.movie['backdrop_path']?.toString();
+    if (backdrop != null && backdrop.isNotEmpty) return backdrop;
+    return null;
+  }
+
+  String get _vidsrcUrl {
+    if (_id.isEmpty) {
+      debugPrint('ERROR: No ID available for VidSrc');
+      return '';
     }
-    return 'https://www.vidking.net/embed/tv/$_id/$_currentSeason/$_currentEpisode?color=7C3AED&autoPlay=true&nextEpisode=true&episodeSelector=true';
+    if (_isMovie) {
+      return 'https://vidsrcme.ru/embed/movie/$_id?autoplay=1';
+    }
+    if (_currentSeason > 0 && _currentEpisode > 0) {
+      return 'https://vidsrcme.ru/embed/tv/$_id/$_currentSeason/$_currentEpisode?autoplay=1&autonext=1';
+    }
+    return 'https://vidsrcme.ru/embed/tv/$_id?autoplay=1&autonext=1';
+  }
+
+  String get _vidsrcUrlWithResume {
+    String url = _vidsrcUrl;
+    if (url.isEmpty) return url;
+    final savedProgress = _getSavedProgress();
+    if (savedProgress > 30) {
+      final separator = url.contains('?') ? '&' : '?';
+      url = '$url${separator}startAt=${savedProgress.toInt()}';
+    }
+    return url;
+  }
+
+  double _getSavedProgress() {
+    final saved = widget.movie['_savedProgress'];
+    if (saved != null) return (saved as num).toDouble();
+    return 0.0;
+  }
+
+  void _saveProgress(double progress) {
+    widget.movie['_savedProgress'] = progress;
+  }
+
+  // ── Fetch real episode data with still_path from TMDB ──
+  Future<void> _fetchEpisodesForSeason(int season) async {
+    if (_episodeCache.containsKey(season)) return;
+    if (_isMovie) return;
+
+    final seriesId = widget.movie['id'];
+    if (seriesId == null) return;
+
+    setState(() => _episodesLoading = true);
+    try {
+      final episodes = await TMDBService().fetchSeasonEpisodes(
+        seriesId,
+        season,
+      );
+      setState(() {
+        _episodeCache[season] = episodes;
+        _episodesLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Failed to fetch episodes: $e');
+      setState(() => _episodesLoading = false);
+    }
   }
 
   void _initWebView() {
+    final url = _vidsrcUrlWithResume;
+    if (url.isEmpty) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.black)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (_) => setState(() => _isLoading = false),
-          onWebResourceError: (_) => setState(() => _isLoading = false),
+          onPageFinished: (_) {
+            setState(() => _isLoading = false);
+            _injectPostMessageListener();
+            _blockAdsAndPopups();
+            _autoClickPlayButton();
+          },
+          onWebResourceError: (error) {
+            debugPrint('WebView error: ${error.description}');
+          },
+          onNavigationRequest: (request) {
+            final uri = Uri.parse(request.url);
+            final host = uri.host.toLowerCase();
+            final isAllowed = _allowedHosts.any((h) => host.contains(h));
+            if (!isAllowed) {
+              debugPrint('BLOCKED redirect to: ${request.url}');
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
         ),
       )
-      ..loadRequest(Uri.parse(_vidkingUrl));
+      ..loadRequest(Uri.parse(url));
   }
 
-  void _reloadWithEpisode(int season, int episode) {
+  // Auto-click VidSrc's play button since autoplay=1 still shows a button on free domains
+  void _autoClickPlayButton() {
+    const js = """
+      (function() {
+        function clickPlay() {
+          const playBtn = document.querySelector('.play-button, .vjs-big-play-button, [class*=\"play\"], button[title*=\"Play\"]');
+          if (playBtn) {
+            playBtn.click();
+            console.log('Auto-clicked play button');
+            return true;
+          }
+          const video = document.querySelector('video');
+          if (video && video.paused) {
+            video.play();
+            console.log('Auto-played video element');
+            return true;
+          }
+          return false;
+        }
+        clickPlay();
+        setTimeout(clickPlay, 500);
+        setTimeout(clickPlay, 1500);
+        setTimeout(clickPlay, 3000);
+      })();
+    """;
+    _controller.runJavaScript(js);
+  }
+
+  void _blockAdsAndPopups() {
+    const js = """
+      (function() {
+        'use strict';
+        window.open = function() { 
+          console.log('BLOCKED: window.open popup');
+          return null; 
+        };
+        document.addEventListener('click', function(e) {
+          const target = e.target.closest('a');
+          if (target) {
+            const href = target.href || '';
+            const allowed = ['vidsrc', 'cloudorchestranova', 'javascript:', '#'];
+            const isAllowed = allowed.some(function(a) { return href.includes(a); });
+            if (!isAllowed) {
+              console.log('BLOCKED click to:', href);
+              e.preventDefault();
+              e.stopPropagation();
+              return false;
+            }
+          }
+        }, true);
+        function removeAds() {
+          const selectors = [
+            'iframe[src*=\"aliexpress\"]',
+            'iframe[src*=\"advertising\"]',
+            'iframe[src*=\"ads\"]',
+            'iframe[src*=\"popup\"]',
+            'iframe[src*=\"click\"]',
+            'iframe[src*=\"banner\"]',
+            'div[class*=\"ad\"]',
+            'div[id*=\"ad\"]',
+            'div[class*=\"popup\"]',
+            'div[id*=\"popup\"]',
+            'div[class*=\"banner\"]',
+            'div[id*=\"banner\"]',
+            'a[target=\"_blank\"]',
+            '[onclick*=\"window.open\"]',
+          ];
+          selectors.forEach(function(selector) {
+            document.querySelectorAll(selector).forEach(function(el) {
+              console.log('REMOVED ad element:', selector);
+              el.remove();
+            });
+          });
+        }
+        removeAds();
+        const observer = new MutationObserver(removeAds);
+        observer.observe(document.body, { childList: true, subtree: true });
+        const originalReplace = window.location.replace;
+        window.location.replace = function(url) {
+          const allowed = ['vidsrc', 'cloudorchestranova'];
+          if (allowed.some(function(a) { return url.includes(a); })) {
+            return originalReplace.call(window.location, url);
+          }
+          console.log('BLOCKED location.replace to:', url);
+        };
+        window.onbeforeunload = null;
+        console.log('Ad blocker injected successfully');
+      })();
+    """;
+    _controller.runJavaScript(js);
+  }
+
+  void _injectPostMessageListener() {
+    const jsCode = """
+      (function() {
+        window.addEventListener('message', function(event) {
+          if (event.data && event.data.type === 'PLAYER_EVENT') {
+            const data = event.data.data;
+            console.log('VIDSRC_EVENT:' + JSON.stringify(data));
+          }
+        });
+      })();
+    """;
+    _controller.runJavaScript(jsCode);
+  }
+
+  void _handlePlayerEvent(Map<String, dynamic> data) {
+    final status = data['player_status']?.toString();
+    final progress = (data['player_progress'] as num?)?.toDouble() ?? 0.0;
+    if (status == 'playing' && progress > 0) {
+      _saveProgress(progress);
+    }
+  }
+
+  void _listenForFullscreenChanges() {
+    const js = """
+      (function() {
+        document.addEventListener('fullscreenchange', function() {
+          const isFullscreen = !!document.fullscreenElement;
+          console.log('FULLSCREEN_CHANGE:' + isFullscreen);
+        });
+      })();
+    """;
+    _controller.runJavaScript(js);
+  }
+
+  void _loadEpisode(int season, int episode) {
     setState(() {
-      _currentSeason = season;
-      _currentEpisode = episode;
+      _activeSeason = season;
+      _activeEpisode = episode;
       _isLoading = true;
     });
-    _controller.loadRequest(Uri.parse(_vidkingUrl));
+    final newUrl = _vidsrcUrl;
+    _controller.loadRequest(Uri.parse(newUrl));
   }
 
-  void _toggleControls() {
-    setState(() => _showControls = !_showControls);
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {}
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    _controller.clearCache();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: GestureDetector(
-        onTap: _toggleControls,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            WebViewWidget(controller: _controller),
+      body: _isFullscreen ? _buildFullscreenView() : _buildPortraitView(),
+    );
+  }
 
-            if (_isLoading)
-              Container(
-                color: Colors.black,
-                child: const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
-                ),
-              ),
+  // PORTRAIT: Video centered at top, movie info below
+  Widget _buildPortraitView() {
+    return SafeArea(
+      child: Column(
+        children: [
+          // Top App Bar
+          _buildAppBar(),
 
-            if (_showControls) ...[
-              _buildTopBar(),
-
-              if (!_isLoading)
-                Center(
-                  child: Container(
-                    width: 72,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white.withOpacity(0.3)),
+          // Video Player
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Container(
+              color: Colors.black,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  WebViewWidget(controller: _controller),
+                  if (_isLoading)
+                    Container(
+                      color: Colors.black,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF7C3AED),
+                        ),
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.touch_app,
-                      color: Colors.white54,
-                      size: 32,
+                ],
+              ),
+            ),
+          ),
+
+          // Movie info below video (scrollable)
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      _MetaBadge(
+                        icon: Icons.star_rounded,
+                        label: _getRating(),
+                        color: Colors.amber,
+                      ),
+                      const SizedBox(width: 12),
+                      _MetaBadge(
+                        icon: Icons.calendar_today_rounded,
+                        label: _getYear(),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'HD',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
 
-              _buildBottomControls(),
-            ],
-          ],
-        ),
+                  // Synopsis
+                  Text(
+                    'Synopsis',
+                    style: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _getSynopsis(),
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 14,
+                      height: 1.6,
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Episodes section (TV only) OR MovieTrend() for movies
+                  if (!_isMovie) ...[
+                    _buildSeasonSelector(),
+                    const SizedBox(height: 16),
+                    _buildEpisodesList(),
+                  ] else ...[
+                    // For movies, use the imported MovieTrend widget
+                    MovieTrend(),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildTopBar() {
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+  // Season selector tabs (S1, S2, S3...)
+  Widget _buildSeasonSelector() {
+    // Get number of seasons from movie data, default to 3
+    final seasonCount = (widget.movie['number_of_seasons'] as int?) ?? 3;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Seasons',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
+        ),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(seasonCount, (index) {
+              final seasonNum = index + 1;
+              final isActive = seasonNum == _activeSeason;
+              return Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() => _activeSeason = seasonNum);
+                    _fetchEpisodesForSeason(seasonNum);
+                    _loadEpisode(seasonNum, 1);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? const Color(0xFF7C3AED)
+                          : Colors.white.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'S$seasonNum',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: isActive
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Episode list with image fallback logic
+  Widget _buildEpisodesList() {
+    final episodes = _getEpisodesForSeason(_activeSeason);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Episodes',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (_episodesLoading)
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+            ),
+          )
+        else
+          ...episodes.map((ep) => _buildEpisodeItem(ep)),
+      ],
+    );
+  }
+
+  List<Map<String, dynamic>> _getEpisodesForSeason(int season) {
+    // 1. Use cached TMDB episode data (has real still_path)
+    if (_episodeCache.containsKey(season)) {
+      return _episodeCache[season]!;
+    }
+
+    // 2. Try to get episodes from movie data (from details API)
+    final seasons = widget.movie['seasons'] as List<dynamic>?;
+    if (seasons != null) {
+      final seasonData = seasons.firstWhere(
+        (s) => (s['season_number'] ?? s['number']) == season,
+        orElse: () => null,
+      );
+      if (seasonData != null && seasonData['episodes'] != null) {
+        return (seasonData['episodes'] as List).cast<Map<String, dynamic>>();
+      }
+    }
+
+    // 3. Fallback: generate placeholder episodes with fallback image
+    final episodeCount = widget.movie['number_of_episodes'] ?? 6;
+    return List.generate(
+      episodeCount,
+      (index) => {
+        'episode_number': index + 1,
+        'name': 'Episode ${index + 1}',
+        'overview': 'Episode ${index + 1} of Season $season',
+        'runtime': 45,
+        'still_path': null,
+        // Pass fallback image so _buildEpisodeItem can use it
+        '_fallback_image': _fallbackImagePath,
+      },
+    );
+  }
+
+  Widget _buildEpisodeItem(Map<String, dynamic> episode) {
+    final epNum = episode['episode_number'] ?? episode['number'] ?? 1;
+    final title = episode['name'] ?? episode['title'] ?? 'Episode $epNum';
+    final subtitle = episode['overview']?.toString().isNotEmpty == true
+        ? episode['overview'].toString()
+        : 'Episode $epNum';
+    final runtime = episode['runtime'] ?? episode['duration'] ?? 45;
+    final isActive = epNum == _activeEpisode;
+
+    // ── IMAGE RESOLUTION: episode still -> movie poster -> movie backdrop -> fallback widget ──
+    String? imagePath = episode['still_path']?.toString();
+    if (imagePath == null || imagePath.isEmpty || imagePath == 'null') {
+      imagePath = episode['_fallback_image']?.toString();
+    }
+    if (imagePath == null || imagePath.isEmpty || imagePath == 'null') {
+      imagePath = _fallbackImagePath;
+    }
+    final bool hasImage =
+        imagePath != null && imagePath.isNotEmpty && imagePath != 'null';
+
+    // Purple-ish background for active playing episode
+    final activeBgColor = const Color(0xFF7C3AED).withOpacity(0.15);
+    final activeBorderColor = const Color(0xFF7C3AED).withOpacity(0.4);
+
+    return GestureDetector(
+      onTap: () => _loadEpisode(_activeSeason, epNum as int),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isActive ? activeBgColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: isActive
+              ? Border.all(color: activeBorderColor, width: 1)
+              : null,
         ),
         child: Row(
           children: [
-            _ControlButton(
-              icon: Icons.arrow_back_ios_new_rounded,
-              onTap: () => Navigator.pop(context),
+            // Thumbnail with fallback chain
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: 100,
+                height: 60,
+                color: Colors.grey[900],
+                child: hasImage
+                    ? Image.network(
+                        'https://image.tmdb.org/t/p/w300$imagePath',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) =>
+                            _buildThumbnailFallback(epNum as int),
+                      )
+                    : _buildThumbnailFallback(epNum as int),
+              ),
             ),
             const SizedBox(width: 12),
+            // Episode info
             Expanded(
-              child: Text(
-                _title, // <-- Use _title getter, not widget.movie.displayTitle
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            _ControlButton(icon: Icons.cast, onTap: () {}),
-            const SizedBox(width: 8),
-            _ControlButton(
-              icon: Icons.settings_outlined,
-              onTap: _showSettingsMenu,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomControls() {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [Colors.black.withOpacity(0.9), Colors.transparent],
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                height: 3,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                child: FractionallySizedBox(
-                  alignment: Alignment.centerLeft,
-                  widthFactor: 0.3,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF7C3AED),
-                      borderRadius: BorderRadius.all(Radius.circular(2)),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _ControlButton(
-                    icon: Icons.subtitles_outlined,
-                    label: 'CC',
-                    onTap: _showSubtitleOptions,
-                  ),
-                  _ControlButton(
-                    icon: Icons.replay_10_rounded,
-                    size: 32,
-                    onTap: () => _seek(-10),
-                  ),
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF7C3AED).withOpacity(0.4),
-                          blurRadius: 20,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.play_arrow_rounded,
+                  Text(
+                    title,
+                    style: TextStyle(
                       color: Colors.white,
-                      size: 32,
+                      fontSize: 14,
+                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  _ControlButton(
-                    icon: Icons.forward_10_rounded,
-                    size: 32,
-                    onTap: () => _seek(10),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  if (!_isMovie) // <-- Use _isMovie getter
-                    _ControlButton(
-                      icon: Icons.list_rounded,
-                      label: 'Eps',
-                      onTap: _showEpisodeSelector,
-                    )
-                  else
-                    _ControlButton(
-                      icon: Icons.fullscreen_rounded,
-                      onTap: _toggleFullscreen,
-                    ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$runtime min',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                  ),
                 ],
               ),
-              const SizedBox(height: 12),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _ControlButton(
-                    icon: _volume > 0 ? Icons.volume_up : Icons.volume_off,
-                    onTap: _toggleMute,
-                  ),
-                  _ControlButton(
-                    icon: Icons.hd_outlined,
-                    label: 'Auto',
-                    onTap: _showQualitySelector,
-                  ),
-                  _ControlButton(
-                    icon: Icons.dns_rounded,
-                    label: 'Server',
-                    onTap: _showServerSelector,
-                  ),
-                  if (!_isMovie) // <-- Use _isMovie getter
-                    _ControlButton(
-                      icon: Icons.fullscreen_rounded,
-                      onTap: _toggleFullscreen,
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _seek(int seconds) {
-    _controller.runJavaScript('''
-      try {
-        const video = document.querySelector('video');
-        if (video) video.currentTime += $seconds;
-      } catch(e) {}
-    ''');
-  }
-
-  void _toggleMute() {
-    setState(() => _volume = _volume > 0 ? 0 : 1);
-    _controller.runJavaScript('''
-      try {
-        const video = document.querySelector('video');
-        if (video) video.muted = ${_volume == 0};
-      } catch(e) {}
-    ''');
-  }
-
-  void _toggleFullscreen() {
-    _controller.runJavaScript('''
-      try {
-        const video = document.querySelector('video');
-        if (video) {
-          if (document.fullscreenElement) {
-            document.exitFullscreen();
-          } else {
-            video.requestFullscreen();
-          }
-        }
-      } catch(e) {}
-    ''');
-  }
-
-  void _showEpisodeSelector() {
-    // Simplified - just show a message for now since we use Map, not MovieModel
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1C1C1C),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                'Episodes',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+            ),
+            // Download icon
+            GestureDetector(
+              onTap: () {
+                // Handle download
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.06),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.download_rounded,
+                  color: isActive ? const Color(0xFF7C3AED) : Colors.grey[400],
+                  size: 18,
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.tv, color: Colors.white70),
-              title: const Text(
-                'Season 1',
-                style: TextStyle(color: Colors.white),
-              ),
-              subtitle: Text(
-                'Episode $_currentEpisode',
-                style: const TextStyle(color: Colors.grey),
-              ),
-              onTap: () => Navigator.pop(context),
-            ),
           ],
         ),
       ),
     );
   }
 
-  void _showQualitySelector() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1C1C1C),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Quality',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+  Widget _buildThumbnailFallback(int epNum) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          color: Colors.grey[850],
+          child: Center(
+            child: Icon(
+              Icons.play_circle_outline,
+              color: Colors.grey[600],
+              size: 24,
             ),
           ),
-          ...['Auto', '4K', '1080p', '720p', '480p', '360p'].map(
-            (q) => ListTile(
-              title: Text(q, style: const TextStyle(color: Colors.white)),
-              trailing: q == 'Auto'
-                  ? const Icon(Icons.check, color: Color(0xFF7C3AED))
-                  : null,
-              onTap: () => Navigator.pop(context),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showServerSelector() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1C1C1C),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Select Server',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ...['Vidking', 'Server 2', 'Server 3'].map(
-            (s) => ListTile(
-              leading: const Icon(Icons.dns, color: Colors.white70),
-              title: Text(s, style: const TextStyle(color: Colors.white)),
-              trailing: s == 'Vidking'
-                  ? const Icon(Icons.check, color: Color(0xFF7C3AED))
-                  : null,
-              onTap: () => Navigator.pop(context),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSubtitleOptions() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1C1C1C),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Subtitles',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ...['Off', 'English', 'Spanish', 'French', 'German'].map(
-            (s) => ListTile(
-              title: Text(s, style: const TextStyle(color: Colors.white)),
-              trailing: s == 'Off'
-                  ? const Icon(Icons.check, color: Color(0xFF7C3AED))
-                  : null,
-              onTap: () => Navigator.pop(context),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSettingsMenu() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1C1C1C),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.speed, color: Colors.white),
-              title: const Text(
-                'Playback Speed',
-                style: TextStyle(color: Colors.white),
-              ),
-              trailing: const Text(
-                '1.0x',
-                style: TextStyle(color: Colors.grey),
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.subtitles, color: Colors.white),
-              title: const Text(
-                'Subtitles',
-                style: TextStyle(color: Colors.white),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _showSubtitleOptions();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.hd, color: Colors.white),
-              title: const Text(
-                'Quality',
-                style: TextStyle(color: Colors.white),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _showQualitySelector();
-              },
-            ),
-          ],
         ),
+        // Episode number badge
+        Positioned(
+          bottom: 4,
+          left: 4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              'E$epNum',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // FULLSCREEN: Video fills entire screen in landscape
+  Widget _buildFullscreenView() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        WebViewWidget(controller: _controller),
+        if (_isLoading)
+          Container(
+            color: Colors.black,
+            child: const Center(
+              child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
+            ),
+          ),
+        // Exit fullscreen button
+        Positioned(
+          top: 16,
+          left: 16,
+          child: SafeArea(
+            child: GestureDetector(
+              onTap: () {
+                setState(() => _isFullscreen = false);
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                  DeviceOrientation.portraitDown,
+                ]);
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.fullscreen_exit_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAppBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              _isMovie ? 'Now Playing' : 'S$_currentSeason E$_currentEpisode',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.cast, color: Colors.white, size: 18),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _controller.clearCache();
-    super.dispose();
+  String _getRating() {
+    final rating =
+        (widget.movie['vote_average'] as num?)?.toDouble() ??
+        (widget.movie['rating'] as num?)?.toDouble() ??
+        0.0;
+    return rating.toStringAsFixed(1);
+  }
+
+  String _getYear() {
+    final date =
+        widget.movie['release_date'] ?? widget.movie['first_air_date'] ?? '';
+    if (date.toString().isNotEmpty) {
+      final parsed = DateTime.tryParse(date.toString());
+      return parsed?.year.toString() ?? 'TBD';
+    }
+    return widget.movie['year']?.toString() ?? 'TBD';
+  }
+
+  String _getSynopsis() {
+    final overview = widget.movie['overview']?.toString();
+    if (overview != null && overview.isNotEmpty) {
+      return overview;
+    }
+    return "No synopsis available.";
   }
 }
 
-class _ControlButton extends StatelessWidget {
+class _MetaBadge extends StatelessWidget {
   final IconData icon;
-  final String? label;
-  final double size;
-  final VoidCallback onTap;
+  final String label;
+  final Color? color;
 
-  const _ControlButton({
-    required this.icon,
-    this.label,
-    this.size = 24,
-    required this.onTap,
-  });
+  const _MetaBadge({required this.icon, required this.label, this.color});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.white, size: size),
-          if (label != null) ...[
-            const SizedBox(height: 2),
-            Text(
-              label!,
-              style: const TextStyle(color: Colors.white70, fontSize: 10),
-            ),
-          ],
-        ],
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: color ?? Colors.grey[400], size: 14),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: color ?? Colors.grey[300],
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }
