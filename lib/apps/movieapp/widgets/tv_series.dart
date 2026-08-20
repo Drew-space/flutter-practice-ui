@@ -3,48 +3,48 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/movieapp/loading/loading_card.dart';
-import 'package:practice_ui/apps/movieapp/movielib/movie_api_link/all_api_link.dart';
+import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
 
-class PopularMovie extends StatefulWidget {
-  const PopularMovie({super.key});
+class TvSeries extends StatefulWidget {
+  const TvSeries({super.key});
 
   @override
-  State<PopularMovie> createState() => _PopularMovieState();
+  State<TvSeries> createState() => _TvSeriesState();
 }
 
-class _PopularMovieState extends State<PopularMovie> {
-  late Future<List<Map<String, dynamic>>> _popularFuture;
+class _TvSeriesState extends State<TvSeries> {
+  late Future<List<Map<String, dynamic>>> _tvFuture;
 
   @override
   void initState() {
     super.initState();
-    _popularFuture = _fetchPopular();
+    _tvFuture = _fetchTvSeries();
   }
 
-  Future<List<Map<String, dynamic>>> _fetchPopular() async {
-    final response = await http.get(Uri.parse(popularMoviesUrl));
+  Future<List<Map<String, dynamic>>> _fetchTvSeries() async {
+    final response = await http.get(Uri.parse(onairTvSeriesUrl));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final results = data['results'] as List<dynamic>;
 
-      return results.map((movie) {
-        final rawDate = movie['release_date'] ?? '';
+      return results.map((tv) {
+        final rawDate = tv['first_air_date'] ?? '';
         final parsedDate = rawDate.isNotEmpty
             ? DateTime.tryParse(rawDate)
             : null;
 
         return {
-          'title': movie['title'] ?? 'Unknown',
-          'rating': (movie['vote_average'] as num?)?.toDouble() ?? 0.0,
+          'title': tv['name'] ?? 'Unknown',
+          'rating': (tv['vote_average'] as num?)?.toDouble() ?? 0.0,
           'date': _formatDate(parsedDate),
-          'imageUrl': movie['poster_path'] != null
-              ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
+          'imageUrl': tv['poster_path'] != null
+              ? 'https://image.tmdb.org/t/p/w500${tv['poster_path']}'
               : '',
         };
       }).toList();
     } else {
-      throw Exception('Failed to load popular movies');
+      throw Exception('Failed to load TV series');
     }
   }
 
@@ -70,10 +70,10 @@ class _PopularMovieState extends State<PopularMovie> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _popularFuture,
+      future: _tvFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return LoadingCard();
+          return const LoadingCard();
         }
 
         if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
@@ -88,13 +88,12 @@ class _PopularMovieState extends State<PopularMovie> {
                   Text(
                     snapshot.hasError
                         ? 'Something went wrong'
-                        : 'No popular movies',
+                        : 'No TV series found',
                     style: TextStyle(color: Colors.grey[500], fontSize: 14),
                   ),
                   const SizedBox(height: 12),
                   GestureDetector(
-                    onTap: () =>
-                        setState(() => _popularFuture = _fetchPopular()),
+                    onTap: () => setState(() => _tvFuture = _fetchTvSeries()),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -120,7 +119,7 @@ class _PopularMovieState extends State<PopularMovie> {
           );
         }
 
-        final movies = snapshot.data!;
+        final shows = snapshot.data!;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +131,7 @@ class _PopularMovieState extends State<PopularMovie> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Popular',
+                    "On Air Series",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -142,7 +141,7 @@ class _PopularMovieState extends State<PopularMovie> {
                   GestureDetector(
                     onTap: () {},
                     child: Text(
-                      'See All',
+                      "See All",
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.6),
                         fontSize: 14,
@@ -153,16 +152,16 @@ class _PopularMovieState extends State<PopularMovie> {
               ),
             ),
             const SizedBox(height: 16),
-            // Horizontal scroll cards
+            // Horizontal scroll
             SizedBox(
               height: 250,
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 scrollDirection: Axis.horizontal,
-                itemCount: movies.length,
+                itemCount: shows.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 14),
                 itemBuilder: (context, index) {
-                  return _PopularCard(movie: movies[index]);
+                  return _TvCard(show: shows[index]);
                 },
               ),
             ),
@@ -173,10 +172,10 @@ class _PopularMovieState extends State<PopularMovie> {
   }
 }
 
-class _PopularCard extends StatelessWidget {
-  final Map<String, dynamic> movie;
+class _TvCard extends StatelessWidget {
+  final Map<String, dynamic> show;
 
-  const _PopularCard({required this.movie});
+  const _TvCard({required this.show});
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +195,7 @@ class _PopularCard extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
-                movie['imageUrl'],
+                show['imageUrl'],
                 height: 175,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -218,7 +217,7 @@ class _PopularCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        movie['title'],
+                        show['title'],
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -236,7 +235,7 @@ class _PopularCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      movie['rating'].toString(),
+                      show['rating'].toString(),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
@@ -247,7 +246,7 @@ class _PopularCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  movie['date'],
+                  show['date'],
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.5),
                     fontSize: 12,

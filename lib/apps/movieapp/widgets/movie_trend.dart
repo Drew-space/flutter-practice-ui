@@ -3,48 +3,48 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/movieapp/loading/loading_card.dart';
-import 'package:practice_ui/apps/movieapp/movielib/movie_api_link/all_api_link.dart';
+import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
 
-class TvSeries extends StatefulWidget {
-  const TvSeries({super.key});
+class MovieTrend extends StatefulWidget {
+  const MovieTrend({super.key});
 
   @override
-  State<TvSeries> createState() => _TvSeriesState();
+  State<MovieTrend> createState() => _MovieTrendState();
 }
 
-class _TvSeriesState extends State<TvSeries> {
-  late Future<List<Map<String, dynamic>>> _tvFuture;
+class _MovieTrendState extends State<MovieTrend> {
+  late Future<List<Map<String, dynamic>>> _trendingFuture;
 
   @override
   void initState() {
     super.initState();
-    _tvFuture = _fetchTvSeries();
+    _trendingFuture = _fetchTrending();
   }
 
-  Future<List<Map<String, dynamic>>> _fetchTvSeries() async {
-    final response = await http.get(Uri.parse(onairTvSeriesUrl));
+  Future<List<Map<String, dynamic>>> _fetchTrending() async {
+    final response = await http.get(Uri.parse(trendingDayUrl));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final results = data['results'] as List<dynamic>;
 
-      return results.map((tv) {
-        final rawDate = tv['first_air_date'] ?? '';
+      return results.map((movie) {
+        final rawDate = movie['release_date'] ?? movie['first_air_date'] ?? '';
         final parsedDate = rawDate.isNotEmpty
             ? DateTime.tryParse(rawDate)
             : null;
 
         return {
-          'title': tv['name'] ?? 'Unknown',
-          'rating': (tv['vote_average'] as num?)?.toDouble() ?? 0.0,
+          'title': movie['title'] ?? movie['name'] ?? 'Unknown',
+          'rating': (movie['vote_average'] as num?)?.toDouble() ?? 0.0,
           'date': _formatDate(parsedDate),
-          'imageUrl': tv['poster_path'] != null
-              ? 'https://image.tmdb.org/t/p/w500${tv['poster_path']}'
+          'imageUrl': movie['poster_path'] != null
+              ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
               : '',
         };
       }).toList();
     } else {
-      throw Exception('Failed to load TV series');
+      throw Exception('Failed to load trending');
     }
   }
 
@@ -70,10 +70,10 @@ class _TvSeriesState extends State<TvSeries> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _tvFuture,
+      future: _trendingFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingCard();
+          return LoadingCard();
         }
 
         if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
@@ -88,12 +88,13 @@ class _TvSeriesState extends State<TvSeries> {
                   Text(
                     snapshot.hasError
                         ? 'Something went wrong'
-                        : 'No TV series found',
+                        : 'No trending movies',
                     style: TextStyle(color: Colors.grey[500], fontSize: 14),
                   ),
                   const SizedBox(height: 12),
                   GestureDetector(
-                    onTap: () => setState(() => _tvFuture = _fetchTvSeries()),
+                    onTap: () =>
+                        setState(() => _trendingFuture = _fetchTrending()),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -119,7 +120,7 @@ class _TvSeriesState extends State<TvSeries> {
           );
         }
 
-        final shows = snapshot.data!;
+        final movies = snapshot.data!;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +132,7 @@ class _TvSeriesState extends State<TvSeries> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    "On Air Series",
+                    "Trending now",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -158,10 +159,10 @@ class _TvSeriesState extends State<TvSeries> {
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 scrollDirection: Axis.horizontal,
-                itemCount: shows.length,
+                itemCount: movies.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 14),
                 itemBuilder: (context, index) {
-                  return _TvCard(show: shows[index]);
+                  return _TrendCard(movie: movies[index]);
                 },
               ),
             ),
@@ -172,10 +173,10 @@ class _TvSeriesState extends State<TvSeries> {
   }
 }
 
-class _TvCard extends StatelessWidget {
-  final Map<String, dynamic> show;
+class _TrendCard extends StatelessWidget {
+  final Map<String, dynamic> movie;
 
-  const _TvCard({required this.show});
+  const _TrendCard({required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +196,7 @@ class _TvCard extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
-                show['imageUrl'],
+                movie['imageUrl'],
                 height: 175,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -217,7 +218,7 @@ class _TvCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        show['title'],
+                        movie['title'],
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -235,7 +236,7 @@ class _TvCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      show['rating'].toString(),
+                      movie['rating'].toString(),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
@@ -246,7 +247,7 @@ class _TvCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  show['date'],
+                  movie['date'],
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.5),
                     fontSize: 12,

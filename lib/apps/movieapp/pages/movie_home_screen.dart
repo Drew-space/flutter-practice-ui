@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:practice_ui/apps/movieapp/utils/movie_card.dart';
-import 'package:practice_ui/apps/movieapp/utils/movie_grid.dart';
-import 'package:practice_ui/apps/movieapp/utils/movie_trend.dart';
-import 'package:practice_ui/apps/movieapp/utils/movie_tv_shows.dart';
-import 'package:practice_ui/apps/movieapp/utils/movie_userprofile.dart';
-import 'package:practice_ui/apps/movieapp/utils/popular_movie.dart';
-import 'package:practice_ui/apps/movieapp/utils/tv_series.dart';
+import 'package:practice_ui/apps/movieapp/widgets/movie_card.dart';
+import 'package:practice_ui/apps/movieapp/widgets/movie_grid.dart';
+import 'package:practice_ui/apps/movieapp/widgets/movie_trend.dart';
+import 'package:practice_ui/apps/movieapp/widgets/movie_tv_shows.dart';
+import 'package:practice_ui/apps/movieapp/widgets/movie_userprofile.dart';
+import 'package:practice_ui/apps/movieapp/widgets/popular_movie.dart';
+import 'package:practice_ui/apps/movieapp/widgets/tv_series.dart';
 
 class MovieHomeScreen extends StatelessWidget {
   const MovieHomeScreen({super.key});

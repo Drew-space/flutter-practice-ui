@@ -3,39 +3,39 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/movieapp/loading/loading_card.dart';
-import 'package:practice_ui/apps/movieapp/movielib/movie_api_link/all_api_link.dart';
+import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
 
-class MovieTrend extends StatefulWidget {
-  const MovieTrend({super.key});
+class PopularMovie extends StatefulWidget {
+  const PopularMovie({super.key});
 
   @override
-  State<MovieTrend> createState() => _MovieTrendState();
+  State<PopularMovie> createState() => _PopularMovieState();
 }
 
-class _MovieTrendState extends State<MovieTrend> {
-  late Future<List<Map<String, dynamic>>> _trendingFuture;
+class _PopularMovieState extends State<PopularMovie> {
+  late Future<List<Map<String, dynamic>>> _popularFuture;
 
   @override
   void initState() {
     super.initState();
-    _trendingFuture = _fetchTrending();
+    _popularFuture = _fetchPopular();
   }
 
-  Future<List<Map<String, dynamic>>> _fetchTrending() async {
-    final response = await http.get(Uri.parse(trendingDayUrl));
+  Future<List<Map<String, dynamic>>> _fetchPopular() async {
+    final response = await http.get(Uri.parse(popularMoviesUrl));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final results = data['results'] as List<dynamic>;
 
       return results.map((movie) {
-        final rawDate = movie['release_date'] ?? movie['first_air_date'] ?? '';
+        final rawDate = movie['release_date'] ?? '';
         final parsedDate = rawDate.isNotEmpty
             ? DateTime.tryParse(rawDate)
             : null;
 
         return {
-          'title': movie['title'] ?? movie['name'] ?? 'Unknown',
+          'title': movie['title'] ?? 'Unknown',
           'rating': (movie['vote_average'] as num?)?.toDouble() ?? 0.0,
           'date': _formatDate(parsedDate),
           'imageUrl': movie['poster_path'] != null
@@ -44,7 +44,7 @@ class _MovieTrendState extends State<MovieTrend> {
         };
       }).toList();
     } else {
-      throw Exception('Failed to load trending');
+      throw Exception('Failed to load popular movies');
     }
   }
 
@@ -70,7 +70,7 @@ class _MovieTrendState extends State<MovieTrend> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _trendingFuture,
+      future: _popularFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingCard();
@@ -88,13 +88,13 @@ class _MovieTrendState extends State<MovieTrend> {
                   Text(
                     snapshot.hasError
                         ? 'Something went wrong'
-                        : 'No trending movies',
+                        : 'No popular movies',
                     style: TextStyle(color: Colors.grey[500], fontSize: 14),
                   ),
                   const SizedBox(height: 12),
                   GestureDetector(
                     onTap: () =>
-                        setState(() => _trendingFuture = _fetchTrending()),
+                        setState(() => _popularFuture = _fetchPopular()),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -132,7 +132,7 @@ class _MovieTrendState extends State<MovieTrend> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    "Trending now",
+                    'Popular',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -142,7 +142,7 @@ class _MovieTrendState extends State<MovieTrend> {
                   GestureDetector(
                     onTap: () {},
                     child: Text(
-                      "See All",
+                      'See All',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.6),
                         fontSize: 14,
@@ -153,7 +153,7 @@ class _MovieTrendState extends State<MovieTrend> {
               ),
             ),
             const SizedBox(height: 16),
-            // Horizontal scroll
+            // Horizontal scroll cards
             SizedBox(
               height: 250,
               child: ListView.separated(
@@ -162,7 +162,7 @@ class _MovieTrendState extends State<MovieTrend> {
                 itemCount: movies.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 14),
                 itemBuilder: (context, index) {
-                  return _TrendCard(movie: movies[index]);
+                  return _PopularCard(movie: movies[index]);
                 },
               ),
             ),
@@ -173,10 +173,10 @@ class _MovieTrendState extends State<MovieTrend> {
   }
 }
 
-class _TrendCard extends StatelessWidget {
+class _PopularCard extends StatelessWidget {
   final Map<String, dynamic> movie;
 
-  const _TrendCard({required this.movie});
+  const _PopularCard({required this.movie});
 
   @override
   Widget build(BuildContext context) {

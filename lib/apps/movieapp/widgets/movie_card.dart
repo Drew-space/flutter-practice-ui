@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:practice_ui/apps/movieapp/loading/shimmer_movie_card.dart';
-import 'package:practice_ui/apps/movieapp/movielib/movie_api_link/all_api_link.dart';
-import 'package:practice_ui/apps/movieapp/utils/movie_detail_page.dart';
+import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
+import 'package:practice_ui/apps/movieapp/widgets/movie_detail_page.dart';
+
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class MovieCardScroller extends StatefulWidget {
@@ -38,21 +39,41 @@ class _MovieCardScrollerState extends State<MovieCardScroller> {
       final data = jsonDecode(response.body);
       final results = data['results'] as List<dynamic>;
 
-      return results
-          .map(
-            (movie) => {
-              'title': movie['title'] ?? 'Unknown',
-              'subtitle': movie['overview'] ?? '',
-              'imageUrl': movie['poster_path'] != null
-                  ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
-                  : '',
-            },
-          )
-          .toList();
+      return results.map((movie) {
+        // Start with the full movie object
+        final movieMap = Map<String, dynamic>.from(movie);
+
+        // Add the full image URL for convenience
+        movieMap['imageUrl'] = movie['poster_path'] != null
+            ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
+            : '';
+
+        // Ensure 'title' key exists (for TV shows that use 'name')
+        movieMap['title'] = movie['title'] ?? movie['name'] ?? 'Unknown';
+
+        return movieMap;
+      }).toList();
     } else {
       throw Exception('Failed to load movies');
     }
   }
+
+  // Future<List<Map<String, dynamic>>> _fetchNowPlaying() async {
+  //   final response = await http.get(Uri.parse(nowPlayingMoviesUrl));
+
+  //   if (response.statusCode == 200) {
+  //     final data = jsonDecode(response.body);
+  //     final results = data['results'] as List<dynamic>;
+  //     print(results);
+  //     return results.map((movie) => {'title': movie['title'] ?? 'Unknown', 'subtitle': movie['overview'] ?? '','imageUrl': movie['poster_path'] != null ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
+  //                 : '',
+  //           },
+  //         )
+  //         .toList();
+  //   } else {
+  //     throw Exception('Failed to load movies');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

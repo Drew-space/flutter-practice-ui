@@ -9,7 +9,7 @@ import 'package:practice_ui/apps/gadgetapp/gadget_navbar.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/gadget_home_screen.dart';
 import 'package:practice_ui/apps/movieapp/movienavbar.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_onboarding.dart';
-import 'package:practice_ui/apps/movieapp/utils/movie_detail_page.dart';
+
 import 'package:practice_ui/apps/naija.dart';
 import 'package:practice_ui/apps/real-estate/auth/auth_screen.dart';
 import 'package:practice_ui/apps/real-estate/utils/real_navbar.dart';
