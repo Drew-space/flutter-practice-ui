@@ -24,5 +24,8 @@ String topratedMoviesUrl =
 String upcomingMoviesUrl =
     "https://api.themoviedb.org/3/movie/upcoming?api_key=$apikey&language=en-US&page=1";
 
+String romanceMoviesUrl =
+    "https://api.themoviedb.org/3/discover/movie?api_key=$apikey&language=en-US&sort_by=popularity.desc&with_genres=10749&page=1";
+
 String allMoviesUrl =
     "https://api.themoviedb.org/3/discover/movie?api_key=$apikey&language=en-US&sort_by=popularity.desc&page=";

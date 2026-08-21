@@ -4,7 +4,7 @@ import 'package:practice_ui/apps/movieapp/widgets/movie_grid.dart';
 import 'package:practice_ui/apps/movieapp/widgets/movie_trend.dart';
 import 'package:practice_ui/apps/movieapp/widgets/movie_tv_shows.dart';
 import 'package:practice_ui/apps/movieapp/widgets/movie_userprofile.dart';
-import 'package:practice_ui/apps/movieapp/widgets/popular_movie.dart';
+import 'package:practice_ui/apps/movieapp/widgets/romance_movie.dart';
 import 'package:practice_ui/apps/movieapp/widgets/tv_series.dart';
 
 class MovieHomeScreen extends StatelessWidget {
@@ -30,7 +30,8 @@ class MovieHomeScreen extends StatelessWidget {
                 const MovieTrend(),
                 const SizedBox(height: 24),
                 const TvSeries(),
-                const PopularMovie(),
+                const SizedBox(height: 24),
+                const RomanceMovies(),
                 const SizedBox(height: 24),
                 const MovieTvShows(),
                 const SizedBox(height: 24),
