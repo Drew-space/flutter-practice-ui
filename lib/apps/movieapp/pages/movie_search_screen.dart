@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/movieapp/movielib/movie_api/apikey.dart';
 import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
-import 'package:practice_ui/apps/movieapp/pages/player/vidking_player_page.dart';
+import 'package:practice_ui/apps/movieapp/pages/player/movie_player_page.dart';
+import 'package:practice_ui/apps/movieapp/pages/player/tv_show_player_page.dart';
 
 class MovieSearchScreen extends StatefulWidget {
   const MovieSearchScreen({super.key});
@@ -160,16 +161,24 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
 
       if (mounted) {
         Navigator.of(context).pop(); // close loading
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VidsrcPlayerPage(
-              movie: movie,
-              season: isTv ? 1 : 0,
-              episode: isTv ? 1 : 0,
+
+        // ── ROUTE TO THE CORRECT PLAYER ──
+        if (isTv) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  TvShowPlayerPage(movie: movie, season: 1, episode: 1),
             ),
-          ),
-        );
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MoviePlayerPage(movie: movie),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -185,6 +194,58 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
       _isNavigating = false;
     }
   }
+
+  // void _onResultTap(Map<String, dynamic> movie) async {
+  //   if (_isNavigating) return;
+  //   _isNavigating = true;
+
+  //   // Show loading indicator
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (_) => const Center(
+  //       child: CircularProgressIndicator(color: Color(0xFF8B5CF6)),
+  //     ),
+  //   );
+
+  //   try {
+  //     final isTv = movie['name'] != null || movie['media_type'] == 'tv';
+
+  //     // For TV shows, fetch full details so we get seasons & episodes
+  //     if (isTv && movie['id'] != null) {
+  //       final tvDetails = await _fetchTvDetails(movie['id'] as int);
+  //       movie['number_of_seasons'] = tvDetails['number_of_seasons'];
+  //       movie['number_of_episodes'] = tvDetails['number_of_episodes'];
+  //       movie['seasons'] = tvDetails['seasons'];
+  //     }
+
+  //     if (mounted) {
+  //       Navigator.of(context).pop(); // close loading
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => VidsrcPlayerPage(
+  //             movie: movie,
+  //             season: isTv ? 1 : 0,
+  //             episode: isTv ? 1 : 0,
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       Navigator.of(context).pop(); // close loading
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Failed to load details: $e'),
+  //           backgroundColor: Colors.red[800],
+  //         ),
+  //       );
+  //     }
+  //   } finally {
+  //     _isNavigating = false;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

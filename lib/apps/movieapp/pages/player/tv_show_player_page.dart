@@ -3,17 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:practice_ui/apps/movieapp/services/tmdb_service.dart';
-import 'package:practice_ui/apps/movieapp/widgets/movie_trend.dart';
 import 'package:practice_ui/apps/movieapp/movielib/movie_api/apikey.dart';
 
 import 'package:webview_flutter/webview_flutter.dart';
 
-class VidsrcPlayerPage extends StatefulWidget {
+/// ── TV SHOW PLAYER ──
+/// Video + seasons selector + episodes list + cast
+class TvShowPlayerPage extends StatefulWidget {
   final Map<String, dynamic> movie;
   final int season;
   final int episode;
 
-  const VidsrcPlayerPage({
+  const TvShowPlayerPage({
     super.key,
     required this.movie,
     this.season = 1,
@@ -21,10 +22,10 @@ class VidsrcPlayerPage extends StatefulWidget {
   });
 
   @override
-  State<VidsrcPlayerPage> createState() => _VidsrcPlayerPageState();
+  State<TvShowPlayerPage> createState() => _TvShowPlayerPageState();
 }
 
-class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
+class _TvShowPlayerPageState extends State<TvShowPlayerPage>
     with WidgetsBindingObserver {
   late final WebViewController _controller;
   bool _isLoading = true;
@@ -89,10 +90,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     return widget.movie['id']?.toString() ?? '';
   }
 
-  // bool get _isMovie => widget.movie['media_type'] == 'movie';
-
-  bool get _isMovie => widget.movie['title'] != null;
-
   int get _currentSeason => _activeSeason;
   int get _currentEpisode => _activeEpisode;
 
@@ -109,9 +106,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     if (_id.isEmpty) {
       debugPrint('ERROR: No ID available for VidSrc');
       return '';
-    }
-    if (_isMovie) {
-      return 'https://vidsrcme.ru/embed/movie/$_id?autoplay=1';
     }
     if (_currentSeason > 0 && _currentEpisode > 0) {
       return 'https://vidsrcme.ru/embed/tv/$_id/$_currentSeason/$_currentEpisode?autoplay=1&autonext=1';
@@ -145,9 +139,8 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     final movieId = widget.movie['id'];
     if (movieId == null) return;
 
-    final type = _isMovie ? 'movie' : 'tv';
     final url =
-        'https://api.themoviedb.org/3/$type/$movieId/credits?api_key=$apikey';
+        'https://api.themoviedb.org/3/tv/$movieId/credits?api_key=$apikey';
 
     setState(() => _castLoading = true);
     try {
@@ -181,7 +174,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
   // ── Fetch real episode data with still_path from TMDB ──
   Future<void> _fetchEpisodesForSeason(int season) async {
     if (_episodeCache.containsKey(season)) return;
-    if (_isMovie) return;
 
     final seriesId = widget.movie['id'];
     if (seriesId == null) return;
@@ -238,23 +230,14 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
       ..loadRequest(Uri.parse(url));
   }
 
-  // Auto-click VidSrc's play button since autoplay=1 still shows a button on free domains
   void _autoClickPlayButton() {
     const js = """
       (function() {
         function clickPlay() {
           const playBtn = document.querySelector('.play-button, .vjs-big-play-button, [class*=\"play\"], button[title*=\"Play\"]');
-          if (playBtn) {
-            playBtn.click();
-            console.log('Auto-clicked play button');
-            return true;
-          }
+          if (playBtn) { playBtn.click(); return true; }
           const video = document.querySelector('video');
-          if (video && video.paused) {
-            video.play();
-            console.log('Auto-played video element');
-            return true;
-          }
+          if (video && video.paused) { video.play(); return true; }
           return false;
         }
         clickPlay();
@@ -270,46 +253,28 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     const js = """
       (function() {
         'use strict';
-        window.open = function() { 
-          console.log('BLOCKED: window.open popup');
-          return null; 
-        };
+        window.open = function() { return null; };
         document.addEventListener('click', function(e) {
           const target = e.target.closest('a');
           if (target) {
             const href = target.href || '';
             const allowed = ['vidsrc', 'cloudorchestranova', 'javascript:', '#'];
             const isAllowed = allowed.some(function(a) { return href.includes(a); });
-            if (!isAllowed) {
-              console.log('BLOCKED click to:', href);
-              e.preventDefault();
-              e.stopPropagation();
-              return false;
-            }
+            if (!isAllowed) { e.preventDefault(); e.stopPropagation(); return false; }
           }
         }, true);
         function removeAds() {
           const selectors = [
-            'iframe[src*=\"aliexpress\"]',
-            'iframe[src*=\"advertising\"]',
-            'iframe[src*=\"ads\"]',
-            'iframe[src*=\"popup\"]',
-            'iframe[src*=\"click\"]',
-            'iframe[src*=\"banner\"]',
-            'div[class*=\"ad\"]',
-            'div[id*=\"ad\"]',
-            'div[class*=\"popup\"]',
-            'div[id*=\"popup\"]',
-            'div[class*=\"banner\"]',
-            'div[id*=\"banner\"]',
-            'a[target=\"_blank\"]',
-            '[onclick*=\"window.open\"]',
+            'iframe[src*=\"aliexpress\"]', 'iframe[src*=\"advertising\"]',
+            'iframe[src*=\"ads\"]', 'iframe[src*=\"popup\"]',
+            'iframe[src*=\"click\"]', 'iframe[src*=\"banner\"]',
+            'div[class*=\"ad\"]', 'div[id*=\"ad\"]',
+            'div[class*=\"popup\"]', 'div[id*=\"popup\"]',
+            'div[class*=\"banner\"]', 'div[id*=\"banner\"]',
+            'a[target=\"_blank\"]', '[onclick*=\"window.open\"]',
           ];
           selectors.forEach(function(selector) {
-            document.querySelectorAll(selector).forEach(function(el) {
-              console.log('REMOVED ad element:', selector);
-              el.remove();
-            });
+            document.querySelectorAll(selector).forEach(function(el) { el.remove(); });
           });
         }
         removeAds();
@@ -321,10 +286,8 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
           if (allowed.some(function(a) { return url.includes(a); })) {
             return originalReplace.call(window.location, url);
           }
-          console.log('BLOCKED location.replace to:', url);
         };
         window.onbeforeunload = null;
-        console.log('Ad blocker injected successfully');
       })();
     """;
     _controller.runJavaScript(js);
@@ -344,26 +307,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     _controller.runJavaScript(jsCode);
   }
 
-  void _handlePlayerEvent(Map<String, dynamic> data) {
-    final status = data['player_status']?.toString();
-    final progress = (data['player_progress'] as num?)?.toDouble() ?? 0.0;
-    if (status == 'playing' && progress > 0) {
-      _saveProgress(progress);
-    }
-  }
-
-  void _listenForFullscreenChanges() {
-    const js = """
-      (function() {
-        document.addEventListener('fullscreenchange', function() {
-          const isFullscreen = !!document.fullscreenElement;
-          console.log('FULLSCREEN_CHANGE:' + isFullscreen);
-        });
-      })();
-    """;
-    _controller.runJavaScript(js);
-  }
-
   void _loadEpisode(int season, int episode) {
     setState(() {
       _activeSeason = season;
@@ -374,7 +317,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     _controller.loadRequest(Uri.parse(newUrl));
   }
 
-  // ── ENTER FULLSCREEN: switch to landscape ──
   void _enterFullscreen() {
     setState(() => _isFullscreen = true);
     SystemChrome.setPreferredOrientations([
@@ -384,7 +326,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
-  // ── EXIT FULLSCREEN: switch back to portrait ──
   void _exitFullscreen() {
     setState(() => _isFullscreen = false);
     SystemChrome.setPreferredOrientations([
@@ -393,9 +334,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {}
 
   @override
   void dispose() {
@@ -417,15 +355,11 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     );
   }
 
-  // PORTRAIT: Video centered at top, movie info below
   Widget _buildPortraitView() {
     return SafeArea(
       child: Column(
         children: [
-          // Top App Bar
           _buildAppBar(),
-
-          // Video Player with fullscreen expand button
           AspectRatio(
             aspectRatio: 16 / 9,
             child: Container(
@@ -443,7 +377,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
                         ),
                       ),
                     ),
-                  // ── Expand to fullscreen button ──
                   Positioned(
                     bottom: 12,
                     right: 12,
@@ -467,8 +400,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
               ),
             ),
           ),
-
-          // Movie info below video (scrollable)
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -518,26 +449,13 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
                     ],
                   ),
                   const SizedBox(height: 16),
-
-                  // ── Expandable Synopsis ──
                   _buildSynopsis(),
-
                   const SizedBox(height: 24),
-
-                  // ── Cast Section ──
                   _buildCastSection(),
-
                   const SizedBox(height: 24),
-
-                  // Episodes section (TV only) OR MovieTrend() for movies
-                  if (!_isMovie) ...[
-                    _buildSeasonSelector(),
-                    const SizedBox(height: 16),
-                    _buildEpisodesList(),
-                  ] else ...[
-                    // For movies, use the imported MovieTrend widget
-                    MovieTrend(),
-                  ],
+                  _buildSeasonSelector(),
+                  const SizedBox(height: 16),
+                  _buildEpisodesList(),
                 ],
               ),
             ),
@@ -547,7 +465,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     );
   }
 
-  // ── Expandable Synopsis Widget ──
   Widget _buildSynopsis() {
     final synopsis = _getSynopsis();
     final bool isLong = synopsis.length > 120;
@@ -609,7 +526,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     );
   }
 
-  // ── Cast Section with Circle Avatars ──
   Widget _buildCastSection() {
     if (_castLoading) {
       return const SizedBox(
@@ -622,7 +538,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
         ),
       );
     }
-
     if (_cast.isEmpty) return const SizedBox.shrink();
 
     return Column(
@@ -657,9 +572,7 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     );
   }
 
-  // Season selector tabs (S1, S2, S3...)
   Widget _buildSeasonSelector() {
-    // Get number of seasons from movie data, default to 3
     final seasonCount = (widget.movie['number_of_seasons'] as int?) ?? 3;
 
     return Column(
@@ -719,7 +632,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     );
   }
 
-  // Episode list with image fallback logic
   Widget _buildEpisodesList() {
     final episodes = _getEpisodesForSeason(_activeSeason);
 
@@ -749,12 +661,10 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
   }
 
   List<Map<String, dynamic>> _getEpisodesForSeason(int season) {
-    // 1. Use cached TMDB episode data (has real still_path)
     if (_episodeCache.containsKey(season)) {
       return _episodeCache[season]!;
     }
 
-    // 2. Try to get episodes from movie data (from details API)
     final seasons = widget.movie['seasons'] as List<dynamic>?;
     if (seasons != null) {
       final seasonData = seasons.firstWhere(
@@ -766,7 +676,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
       }
     }
 
-    // 3. Fallback: generate placeholder episodes with fallback image
     final episodeCount = widget.movie['number_of_episodes'] ?? 6;
     return List.generate(
       episodeCount,
@@ -776,7 +685,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
         'overview': 'Episode ${index + 1} of Season $season',
         'runtime': 45,
         'still_path': null,
-        // Pass fallback image so _buildEpisodeItem can use it
         '_fallback_image': _fallbackImagePath,
       },
     );
@@ -791,7 +699,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     final runtime = episode['runtime'] ?? episode['duration'] ?? 45;
     final isActive = epNum == _activeEpisode;
 
-    // ── IMAGE RESOLUTION: episode still -> movie poster -> movie backdrop -> fallback widget ──
     String? imagePath = episode['still_path']?.toString();
     if (imagePath == null || imagePath.isEmpty || imagePath == 'null') {
       imagePath = episode['_fallback_image']?.toString();
@@ -802,7 +709,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     final bool hasImage =
         imagePath != null && imagePath.isNotEmpty && imagePath != 'null';
 
-    // Purple-ish background for active playing episode
     final activeBgColor = const Color(0xFF7C3AED).withOpacity(0.15);
     final activeBorderColor = const Color(0xFF7C3AED).withOpacity(0.4);
 
@@ -820,7 +726,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
         ),
         child: Row(
           children: [
-            // Thumbnail with fallback chain
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Container(
@@ -838,7 +743,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
               ),
             ),
             const SizedBox(width: 12),
-            // Episode info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -868,11 +772,8 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
                 ],
               ),
             ),
-            // Download icon
             GestureDetector(
-              onTap: () {
-                // Handle download
-              },
+              onTap: () {},
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -906,7 +807,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
             ),
           ),
         ),
-        // Episode number badge
         Positioned(
           bottom: 4,
           left: 4,
@@ -930,7 +830,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
     );
   }
 
-  // FULLSCREEN: Video fills entire screen in landscape
   Widget _buildFullscreenView() {
     return Stack(
       fit: StackFit.expand,
@@ -943,7 +842,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
               child: CircularProgressIndicator(color: Color(0xFF7C3AED)),
             ),
           ),
-        // Exit fullscreen button
         Positioned(
           top: 16,
           left: 16,
@@ -992,7 +890,7 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              _isMovie ? 'Now Playing' : 'S$_currentSeason E$_currentEpisode',
+              'S$_currentSeason E$_currentEpisode',
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -1025,8 +923,7 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
   }
 
   String _getYear() {
-    final date =
-        widget.movie['release_date'] ?? widget.movie['first_air_date'] ?? '';
+    final date = widget.movie['first_air_date'] ?? '';
     if (date.toString().isNotEmpty) {
       final parsed = DateTime.tryParse(date.toString());
       return parsed?.year.toString() ?? 'TBD';
@@ -1043,7 +940,6 @@ class _VidsrcPlayerPageState extends State<VidsrcPlayerPage>
   }
 }
 
-// ── Cast Avatar Widget ──
 class _CastAvatar extends StatelessWidget {
   final String name;
   final String character;
@@ -1061,7 +957,6 @@ class _CastAvatar extends StatelessWidget {
       width: 70,
       child: Column(
         children: [
-          // Circle Avatar
           Container(
             width: 60,
             height: 60,
@@ -1096,7 +991,6 @@ class _CastAvatar extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          // Actor Name
           Text(
             name,
             style: const TextStyle(
@@ -1109,7 +1003,6 @@ class _CastAvatar extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 2),
-          // Character Name
           Text(
             character.isNotEmpty ? character : 'Unknown',
             style: TextStyle(color: Colors.grey[500], fontSize: 10),

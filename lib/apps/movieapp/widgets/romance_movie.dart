@@ -6,24 +6,24 @@
 // import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
 // import 'package:practice_ui/apps/movieapp/pages/player/vidking_player_page.dart';
 
-// class PopularMovie extends StatefulWidget {
-//   const PopularMovie({super.key});
+// class RomanceMovies extends StatefulWidget {
+//   const RomanceMovies({super.key});
 
 //   @override
-//   State<PopularMovie> createState() => _PopularMovieState();
+//   State<RomanceMovies> createState() => _RomanceMoviesState();
 // }
 
-// class _PopularMovieState extends State<PopularMovie> {
-//   late Future<List<Map<String, dynamic>>> _popularFuture;
+// class _RomanceMoviesState extends State<RomanceMovies> {
+//   late Future<List<Map<String, dynamic>>> _romanceFuture;
 
 //   @override
 //   void initState() {
 //     super.initState();
-//     _popularFuture = _fetchPopular();
+//     _romanceFuture = _fetchRomance();
 //   }
 
-//   Future<List<Map<String, dynamic>>> _fetchPopular() async {
-//     final response = await http.get(Uri.parse(popularMoviesUrl));
+//   Future<List<Map<String, dynamic>>> _fetchRomance() async {
+//     final response = await http.get(Uri.parse(romanceMoviesUrl));
 
 //     if (response.statusCode == 200) {
 //       final data = jsonDecode(response.body);
@@ -52,7 +52,7 @@
 //         };
 //       }).toList();
 //     } else {
-//       throw Exception('Failed to load popular movies');
+//       throw Exception('Failed to load romance movies');
 //     }
 //   }
 
@@ -85,7 +85,7 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return FutureBuilder<List<Map<String, dynamic>>>(
-//       future: _popularFuture,
+//       future: _romanceFuture,
 //       builder: (context, snapshot) {
 //         if (snapshot.connectionState == ConnectionState.waiting) {
 //           return LoadingCard();
@@ -103,13 +103,13 @@
 //                   Text(
 //                     snapshot.hasError
 //                         ? 'Something went wrong'
-//                         : 'No popular movies',
+//                         : 'No romance movies',
 //                     style: TextStyle(color: Colors.grey[500], fontSize: 14),
 //                   ),
 //                   const SizedBox(height: 12),
 //                   GestureDetector(
 //                     onTap: () =>
-//                         setState(() => _popularFuture = _fetchPopular()),
+//                         setState(() => _romanceFuture = _fetchRomance()),
 //                     child: Container(
 //                       padding: const EdgeInsets.symmetric(
 //                         horizontal: 20,
@@ -146,13 +146,17 @@
 //               child: Row(
 //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                 children: [
-//                   const Text(
-//                     'Popular',
-//                     style: TextStyle(
-//                       color: Colors.white,
-//                       fontSize: 20,
-//                       fontWeight: FontWeight.bold,
-//                     ),
+//                   Row(
+//                     children: [
+//                       const Text(
+//                         'Romance',
+//                         style: TextStyle(
+//                           color: Colors.white,
+//                           fontSize: 20,
+//                           fontWeight: FontWeight.bold,
+//                         ),
+//                       ),
+//                     ],
 //                   ),
 //                   GestureDetector(
 //                     onTap: () {},
@@ -177,7 +181,7 @@
 //                 itemCount: movies.length,
 //                 separatorBuilder: (_, __) => const SizedBox(width: 14),
 //                 itemBuilder: (context, index) {
-//                   return _PopularCard(
+//                   return _RomanceCard(
 //                     movie: movies[index],
 //                     onTap: () => _onMovieTap(movies[index]),
 //                   );
@@ -191,11 +195,11 @@
 //   }
 // }
 
-// class _PopularCard extends StatelessWidget {
+// class _RomanceCard extends StatelessWidget {
 //   final Map<String, dynamic> movie;
 //   final VoidCallback onTap;
 
-//   const _PopularCard({required this.movie, required this.onTap});
+//   const _RomanceCard({required this.movie, required this.onTap});
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -293,7 +297,7 @@ import 'package:http/http.dart' as http;
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/movieapp/loading/loading_card.dart';
 import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
-import 'package:practice_ui/apps/movieapp/pages/player/vidking_player_page.dart';
+import 'package:practice_ui/apps/movieapp/pages/player/movie_player_page.dart';
 
 class RomanceMovies extends StatefulWidget {
   const RomanceMovies({super.key});
@@ -313,28 +317,19 @@ class _RomanceMoviesState extends State<RomanceMovies> {
 
   Future<List<Map<String, dynamic>>> _fetchRomance() async {
     final response = await http.get(Uri.parse(romanceMoviesUrl));
-
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final results = data['results'] as List<dynamic>;
-
       return results.map((movie) {
         final rawDate = movie['release_date'] ?? '';
         final parsedDate = rawDate.isNotEmpty
             ? DateTime.tryParse(rawDate)
             : null;
-
         return {
-          'id': movie['id'],
+          ...movie as Map<String, dynamic>,
           'title': movie['title'] ?? 'Unknown',
-          'name': movie['title'],
           'rating': (movie['vote_average'] as num?)?.toDouble() ?? 0.0,
-          'vote_average': movie['vote_average'],
           'date': _formatDate(parsedDate),
-          'release_date': movie['release_date'],
-          'overview': movie['overview'] ?? '',
-          'poster_path': movie['poster_path'],
-          'backdrop_path': movie['backdrop_path'],
           'imageUrl': movie['poster_path'] != null
               ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
               : '',
@@ -364,10 +359,10 @@ class _RomanceMoviesState extends State<RomanceMovies> {
     return '${months[date.month - 1]} ${date.day.toString().padLeft(2, '0')} ${date.year}';
   }
 
-  void _onMovieTap(Map<String, dynamic> movie) {
+  void _openPlayer(Map<String, dynamic> movie) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VidsrcPlayerPage(movie: movie)),
+      MaterialPageRoute(builder: (_) => MoviePlayerPage(movie: movie)),
     );
   }
 
@@ -379,7 +374,6 @@ class _RomanceMoviesState extends State<RomanceMovies> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingCard();
         }
-
         if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
           return SizedBox(
             height: 250,
@@ -425,27 +419,21 @@ class _RomanceMoviesState extends State<RomanceMovies> {
         }
 
         final movies = snapshot.data!;
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      const Text(
-                        'Romance',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const Text(
+                    'Romance',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   GestureDetector(
                     onTap: () {},
@@ -461,7 +449,6 @@ class _RomanceMoviesState extends State<RomanceMovies> {
               ),
             ),
             const SizedBox(height: 16),
-            // Horizontal scroll cards
             SizedBox(
               height: 250,
               child: ListView.separated(
@@ -472,7 +459,7 @@ class _RomanceMoviesState extends State<RomanceMovies> {
                 itemBuilder: (context, index) {
                   return _RomanceCard(
                     movie: movies[index],
-                    onTap: () => _onMovieTap(movies[index]),
+                    onTap: () => _openPlayer(movies[index]),
                   );
                 },
               ),
@@ -504,7 +491,6 @@ class _RomanceCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Poster image with padding inside the gray card
             Padding(
               padding: const EdgeInsets.all(8),
               child: ClipRRect(
@@ -525,7 +511,6 @@ class _RomanceCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Text content sitting on the gray background
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
               child: Column(

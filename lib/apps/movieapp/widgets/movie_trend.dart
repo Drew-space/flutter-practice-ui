@@ -4,6 +4,7 @@
 // import 'package:hugeicons/hugeicons.dart';
 // import 'package:practice_ui/apps/movieapp/loading/loading_card.dart';
 // import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
+// import 'package:practice_ui/apps/movieapp/widgets/movie_detail_page.dart';
 
 // class MovieTrend extends StatefulWidget {
 //   const MovieTrend({super.key});
@@ -34,10 +35,12 @@
 //             ? DateTime.tryParse(rawDate)
 //             : null;
 
+//         // Store the FULL raw movie map so detail page gets everything
 //         return {
-//           'title': movie['title'] ?? movie['name'] ?? 'Unknown',
-//           'rating': (movie['vote_average'] as num?)?.toDouble() ?? 0.0,
-//           'date': _formatDate(parsedDate),
+//           ...movie as Map<String, dynamic>,
+//           'display_title': movie['title'] ?? movie['name'] ?? 'Unknown',
+//           'display_rating': (movie['vote_average'] as num?)?.toDouble() ?? 0.0,
+//           'display_date': _formatDate(parsedDate),
 //           'imageUrl': movie['poster_path'] != null
 //               ? 'https://image.tmdb.org/t/p/w500${movie['poster_path']}'
 //               : '',
@@ -180,83 +183,94 @@
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Container(
-//       width: 200,
-//       decoration: BoxDecoration(
-//         color: const Color(0xFF1C1C1E),
-//         borderRadius: BorderRadius.circular(16),
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           // Poster image with padding inside the gray card
-//           Padding(
-//             padding: const EdgeInsets.all(8),
-//             child: ClipRRect(
-//               borderRadius: BorderRadius.circular(12),
-//               child: Image.network(
-//                 movie['imageUrl'],
-//                 height: 175,
-//                 width: double.infinity,
-//                 fit: BoxFit.cover,
-//                 errorBuilder: (context, error, stackTrace) => Container(
+//     return GestureDetector(
+//       onTap: () {
+//         Navigator.push(
+//           context,
+//           MaterialPageRoute(builder: (_) => MovieDetailPage(movie: movie)),
+//         );
+//       },
+//       child: Container(
+//         width: 200,
+//         decoration: BoxDecoration(
+//           color: const Color(0xFF1C1C1E),
+//           borderRadius: BorderRadius.circular(16),
+//         ),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             // Poster image with padding inside the gray card
+//             Padding(
+//               padding: const EdgeInsets.all(8),
+//               child: ClipRRect(
+//                 borderRadius: BorderRadius.circular(12),
+//                 child: Image.network(
+//                   movie['imageUrl'],
 //                   height: 175,
-//                   color: const Color(0xFF2A2A2A),
-//                   child: const Icon(Icons.broken_image, color: Colors.white54),
+//                   width: double.infinity,
+//                   fit: BoxFit.cover,
+//                   errorBuilder: (context, error, stackTrace) => Container(
+//                     height: 175,
+//                     color: const Color(0xFF2A2A2A),
+//                     child: const Icon(
+//                       Icons.broken_image,
+//                       color: Colors.white54,
+//                     ),
+//                   ),
 //                 ),
 //               ),
 //             ),
-//           ),
-//           // Text content sitting on the gray background
-//           Padding(
-//             padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Row(
-//                   children: [
-//                     Expanded(
-//                       child: Text(
-//                         movie['title'],
-//                         maxLines: 1,
-//                         overflow: TextOverflow.ellipsis,
-//                         style: const TextStyle(
-//                           color: Colors.white,
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
+//             // Text content sitting on the gray background
+//             Padding(
+//               padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Row(
+//                     children: [
+//                       Expanded(
+//                         child: Text(
+//                           movie['display_title'],
+//                           maxLines: 1,
+//                           overflow: TextOverflow.ellipsis,
+//                           style: const TextStyle(
+//                             color: Colors.white,
+//                             fontSize: 14,
+//                             fontWeight: FontWeight.w600,
+//                           ),
 //                         ),
 //                       ),
-//                     ),
-//                     const SizedBox(width: 6),
-//                     HugeIcon(
-//                       icon: HugeIcons.strokeRoundedStar,
-//                       color: Colors.amber,
-//                       size: 14,
-//                     ),
-//                     const SizedBox(width: 2),
-//                     Text(
-//                       movie['rating'].toString(),
-//                       style: const TextStyle(
-//                         color: Colors.white70,
-//                         fontSize: 12,
-//                         fontWeight: FontWeight.w500,
+//                       const SizedBox(width: 6),
+//                       HugeIcon(
+//                         icon: HugeIcons.strokeRoundedStar,
+//                         color: Colors.amber,
+//                         size: 14,
 //                       ),
-//                     ),
-//                   ],
-//                 ),
-//                 const SizedBox(height: 4),
-//                 Text(
-//                   movie['date'],
-//                   style: TextStyle(
-//                     color: Colors.white.withOpacity(0.5),
-//                     fontSize: 12,
+//                       const SizedBox(width: 2),
+//                       Text(
+//                         movie['display_rating'].toString(),
+//                         style: const TextStyle(
+//                           color: Colors.white70,
+//                           fontSize: 12,
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                       ),
+//                     ],
 //                   ),
-//                 ),
-//               ],
+//                   const SizedBox(height: 4),
+//                   Text(
+//                     movie['display_date'],
+//                     style: TextStyle(
+//                       color: Colors.white.withOpacity(0.5),
+//                       fontSize: 12,
+//                     ),
+//                   ),
+//                 ],
+//               ),
 //             ),
-//           ),
-//         ],
+//           ],
+//         ),
 //       ),
 //     );
 //   }
@@ -268,7 +282,8 @@ import 'package:http/http.dart' as http;
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/movieapp/loading/loading_card.dart';
 import 'package:practice_ui/apps/movieapp/movielib/keys/all_api_link.dart';
-import 'package:practice_ui/apps/movieapp/widgets/movie_detail_page.dart';
+import 'package:practice_ui/apps/movieapp/pages/player/movie_player_page.dart';
+import 'package:practice_ui/apps/movieapp/pages/player/tv_show_player_page.dart';
 
 class MovieTrend extends StatefulWidget {
   const MovieTrend({super.key});
@@ -288,18 +303,14 @@ class _MovieTrendState extends State<MovieTrend> {
 
   Future<List<Map<String, dynamic>>> _fetchTrending() async {
     final response = await http.get(Uri.parse(trendingDayUrl));
-
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final results = data['results'] as List<dynamic>;
-
       return results.map((movie) {
         final rawDate = movie['release_date'] ?? movie['first_air_date'] ?? '';
         final parsedDate = rawDate.isNotEmpty
             ? DateTime.tryParse(rawDate)
             : null;
-
-        // Store the FULL raw movie map so detail page gets everything
         return {
           ...movie as Map<String, dynamic>,
           'display_title': movie['title'] ?? movie['name'] ?? 'Unknown',
@@ -334,6 +345,32 @@ class _MovieTrendState extends State<MovieTrend> {
     return '${months[date.month - 1]} ${date.day.toString().padLeft(2, '0')} ${date.year}';
   }
 
+  /// ── Helper: detect if TV show ──
+  bool _isTvShow(Map<String, dynamic> movie) {
+    final mediaType = movie['media_type']?.toString().toLowerCase();
+    if (mediaType == 'tv') return true;
+    if (mediaType == 'movie') return false;
+    if (movie['title'] == null && movie['name'] != null) return true;
+    if (movie['number_of_seasons'] != null) return true;
+    return false;
+  }
+
+  void _openPlayer(Map<String, dynamic> movie) {
+    if (_isTvShow(movie)) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => TvShowPlayerPage(movie: movie, season: 1, episode: 1),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => MoviePlayerPage(movie: movie)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
@@ -342,7 +379,6 @@ class _MovieTrendState extends State<MovieTrend> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingCard();
         }
-
         if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
           return SizedBox(
             height: 250,
@@ -388,11 +424,9 @@ class _MovieTrendState extends State<MovieTrend> {
         }
 
         final movies = snapshot.data!;
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -420,7 +454,6 @@ class _MovieTrendState extends State<MovieTrend> {
               ),
             ),
             const SizedBox(height: 16),
-            // Horizontal scroll
             SizedBox(
               height: 250,
               child: ListView.separated(
@@ -429,7 +462,10 @@ class _MovieTrendState extends State<MovieTrend> {
                 itemCount: movies.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 14),
                 itemBuilder: (context, index) {
-                  return _TrendCard(movie: movies[index]);
+                  return _TrendCard(
+                    movie: movies[index],
+                    onTap: () => _openPlayer(movies[index]),
+                  );
                 },
               ),
             ),
@@ -442,18 +478,14 @@ class _MovieTrendState extends State<MovieTrend> {
 
 class _TrendCard extends StatelessWidget {
   final Map<String, dynamic> movie;
+  final VoidCallback onTap;
 
-  const _TrendCard({required this.movie});
+  const _TrendCard({required this.movie, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => MovieDetailPage(movie: movie)),
-        );
-      },
+      onTap: onTap,
       child: Container(
         width: 200,
         decoration: BoxDecoration(
@@ -464,7 +496,6 @@ class _TrendCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Poster image with padding inside the gray card
             Padding(
               padding: const EdgeInsets.all(8),
               child: ClipRRect(
@@ -485,7 +516,6 @@ class _TrendCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Text content sitting on the gray background
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
               child: Column(
