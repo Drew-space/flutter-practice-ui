@@ -31,6 +31,7 @@ void main() async {
   //    Every screen that needs it just calls Hive.box('favoritesBox')
   //    afterwards — no need to "open" it again.
   await Hive.openBox('favoritesBox');
+  await Hive.openBox<String>('movieBookmarks'); // JSON strings
 
   runApp(const ProviderScope(child: MyApp()));
 }

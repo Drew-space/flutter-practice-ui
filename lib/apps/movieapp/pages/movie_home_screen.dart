@@ -46,6 +46,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:practice_ui/apps/movieapp/widgets/action_movies.dart';
 import 'package:practice_ui/apps/movieapp/widgets/movie_card.dart';
 import 'package:practice_ui/apps/movieapp/widgets/movie_grid.dart';
 import 'package:practice_ui/apps/movieapp/widgets/movie_trend.dart';
@@ -84,7 +85,7 @@ class MovieHomeScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 const MovieTvShows(),
                 const SizedBox(height: 24),
-                const MovieGrid(),
+                const ActionMovies(),
               ],
             ),
           ),
