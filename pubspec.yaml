@@ -44,6 +44,12 @@ dependencies:
   chewie: ^1.15.0
   shimmer: ^3.0.0
   webview_flutter: ^4.14.1
+  dio: ^5.4.0 # For downloading files
+  path_provider: ^2.1.2 # For app storage paths
+  permission_handler: ^11.3.0 # For storage permissions
+  firebase_core: ^4.0.0
+  firebase_auth: ^6.0.0
+  google_sign_in: ^7.1.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -54,6 +60,8 @@ dev_dependencies:
     sdk: flutter
   hive_generator:
   build_runner:
+
+  url_launcher: ^6.3.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

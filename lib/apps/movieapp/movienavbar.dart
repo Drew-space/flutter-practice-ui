@@ -168,7 +168,7 @@ class _MovieNavbarState extends State<MovieNavbar> {
     MovieHomeScreen(onSearchTap: () => _goToTab(1)),
     const MovieSearchScreen(),
     const MovieBookmarksScreen(),
-    const MovieDownloadScreen(),
+    // const MovieDownloadScreen(),
     const MovieSettingsScreen(),
   ];
 
@@ -176,7 +176,7 @@ class _MovieNavbarState extends State<MovieNavbar> {
     _NavItemData(label: 'Home', icon: HugeIcons.strokeRoundedHome01),
     _NavItemData(label: 'Search', icon: HugeIcons.strokeRoundedSearch01),
     _NavItemData(label: 'Wishlist', icon: HugeIcons.strokeRoundedFavourite),
-    _NavItemData(label: 'Downloads', icon: HugeIcons.strokeRoundedDownload01),
+    // _NavItemData(label: 'Downloads', icon: HugeIcons.strokeRoundedDownload01),
     _NavItemData(label: 'Settings', icon: HugeIcons.strokeRoundedSettings01),
   ];
 

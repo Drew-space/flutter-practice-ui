@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:practice_ui/apps/movieapp/pages/movie_settings_help_screen.dart';
+import 'package:practice_ui/apps/movieapp/pages/movie_settings_about_screen.dart';
+import 'package:practice_ui/apps/movieapp/pages/movie_bookmarks_screen.dart';
+import 'package:practice_ui/apps/movieapp/services/auth_service.dart';
 
 class MovieSettingsScreen extends StatefulWidget {
   const MovieSettingsScreen({super.key});
@@ -9,8 +14,7 @@ class MovieSettingsScreen extends StatefulWidget {
 }
 
 class _MovieSettingsScreenState extends State<MovieSettingsScreen> {
-  bool pauseNotifications = true;
-  bool darkMode = false;
+  final User? _user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -21,25 +25,19 @@ class _MovieSettingsScreenState extends State<MovieSettingsScreen> {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // ── App Bar ──
-            SliverToBoxAdapter(
+            // ── Header ──
+            const SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    const Text(
-                      'Settings',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Center(
+                  child: Text(
+                    'Settings',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -48,155 +46,97 @@ class _MovieSettingsScreenState extends State<MovieSettingsScreen> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF141414),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        ClipOval(
-                          child: Image.network(
-                            "https://img.magnific.com/free-photo/confident-waitress-looking-camera_23-2147830510.jpg",
-
-                            width: 48,
-                            height: 48,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Alex.R',
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF141414),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipOval(
+                        child: _user?.photoURL != null
+                            ? Image.network(
+                                _user!.photoURL!,
+                                width: 48,
+                                height: 48,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => _defaultAvatar(),
+                              )
+                            : _defaultAvatar(),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _user?.displayName ?? 'Guest User',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                            if (_user?.email != null)
+                              Text(
+                                _user!.email!,
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                                  fontSize: 13,
+                                  color: Colors.grey[500],
                                 ),
                               ),
-                              const SizedBox(height: 2),
-                              // Text(
-                              //   '@yourname',
-                              //   style: TextStyle(
-                              //     fontSize: 13,
-                              //     color: Colors.grey[500],
-                              //   ),
-                              // ),
-                            ],
+                          ],
+                        ),
+                      ),
+                      HugeIcon(
+                        icon: HugeIcons.strokeRoundedArrowRight01,
+                        color: Colors.grey[600]!,
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // ── All Options (merged into one section) ──
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF141414),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    children: [
+                      _ArrowItem(
+                        icon: HugeIcons.strokeRoundedHeartAdd,
+                        label: 'My Wishlist',
+                        subtitle: 'Saved movies & shows',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MovieBookmarksScreen(),
                           ),
                         ),
-                        HugeIcon(
-                          icon: HugeIcons.strokeRoundedArrowRight01,
-                          color: Colors.grey[600]!,
-                          size: 18,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // ── Group 1: Notifications ──
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF141414),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      _ToggleItem(
-                        icon: HugeIcons.strokeRoundedNotification02,
-                        label: 'Pause notifications',
-                        value: pauseNotifications,
-                        activeColor: const Color(0xFF8B5CF6),
-                        onChanged: (v) =>
-                            setState(() => pauseNotifications = v),
                       ),
                       Divider(
                         color: Colors.white.withOpacity(0.05),
                         height: 1,
                         indent: 52,
                       ),
-                      _ArrowItem(
-                        icon: HugeIcons.strokeRoundedSettings01,
-                        label: 'General settings',
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // ── Group 2: Appearance & Contact ──
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF141414),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      _ToggleItem(
-                        icon: HugeIcons.strokeRoundedMoon02,
-                        label: 'Dark mode',
-                        value: darkMode,
-                        activeColor: const Color(0xFF8B5CF6),
-                        onChanged: (v) => setState(() => darkMode = v),
-                      ),
-                      Divider(
-                        color: Colors.white.withOpacity(0.05),
-                        height: 1,
-                        indent: 52,
-                      ),
-                      _ArrowItem(
-                        icon: HugeIcons.strokeRoundedLanguageSkill,
-                        label: 'Language',
-                        onTap: () {},
-                      ),
-                      Divider(
-                        color: Colors.white.withOpacity(0.05),
-                        height: 1,
-                        indent: 52,
-                      ),
-                      _ArrowItem(
-                        icon: HugeIcons.strokeRoundedDownload01,
-                        label: 'My Downloads',
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // ── Group 3: Legal ──
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF141414),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
                       _ArrowItem(
                         icon: HugeIcons.strokeRoundedHelpCircle,
-                        label: 'FAQ',
-                        onTap: () {},
+                        label: 'Help & Support',
+                        subtitle: 'FAQ & contact',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MovieSettingsHelpScreen(),
+                          ),
+                        ),
                       ),
                       Divider(
                         color: Colors.white.withOpacity(0.05),
@@ -204,19 +144,15 @@ class _MovieSettingsScreenState extends State<MovieSettingsScreen> {
                         indent: 52,
                       ),
                       _ArrowItem(
-                        icon: HugeIcons.strokeRoundedFile01,
-                        label: 'Terms of service',
-                        onTap: () {},
-                      ),
-                      Divider(
-                        color: Colors.white.withOpacity(0.05),
-                        height: 1,
-                        indent: 52,
-                      ),
-                      _ArrowItem(
-                        icon: HugeIcons.strokeRoundedFile02,
-                        label: 'User policy',
-                        onTap: () {},
+                        icon: HugeIcons.strokeRoundedInformationCircle,
+                        label: 'About',
+                        subtitle: 'Version & legal',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MovieSettingsAboutScreen(),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -224,17 +160,21 @@ class _MovieSettingsScreenState extends State<MovieSettingsScreen> {
               ),
             ),
 
-            // ── Logout Button ──
+            // ── Logout (separate, stays at bottom) ──
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () => _showLogoutDialog(context),
                   child: Container(
                     height: 54,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(28),
+                      color: const Color(0xFF1A1A1A),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.red.withOpacity(0.2),
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -264,54 +204,52 @@ class _MovieSettingsScreenState extends State<MovieSettingsScreen> {
       ),
     );
   }
-}
 
-// ─── Toggle Item ───────────────────────────────────────────────
+  Widget _defaultAvatar() {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.grey[800],
+        shape: BoxShape.circle,
+      ),
+      child: Icon(Icons.person, color: Colors.grey[500], size: 24),
+    );
+  }
 
-class _ToggleItem extends StatelessWidget {
-  final dynamic icon;
-  final String label;
-  final bool value;
-  final Color activeColor;
-  final ValueChanged<bool> onChanged;
-
-  const _ToggleItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.activeColor,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          HugeIcon(icon: icon, color: Colors.grey[400]!, size: 22),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-            ),
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          'Log Out?',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-          SizedBox(
-            height: 28,
-            child: FittedBox(
-              child: Switch(
-                value: value,
-                onChanged: onChanged,
-                activeColor: activeColor,
-                activeTrackColor: activeColor.withOpacity(0.3),
-                inactiveThumbColor: Colors.white,
-                inactiveTrackColor: Colors.white.withOpacity(0.15),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        content: const Text(
+          'Are you sure you want to logout',
+          style: TextStyle(color: Colors.grey, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await AuthService().signOut();
+            },
+            child: Text(
+              'Log Out',
+              style: TextStyle(
+                color: Colors.red[400],
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
@@ -321,16 +259,16 @@ class _ToggleItem extends StatelessWidget {
   }
 }
 
-// ─── Arrow Item ────────────────────────────────────────────────
-
 class _ArrowItem extends StatelessWidget {
   final dynamic icon;
   final String label;
+  final String? subtitle;
   final VoidCallback onTap;
 
   const _ArrowItem({
     required this.icon,
     required this.label,
+    this.subtitle,
     required this.onTap,
   });
 
@@ -345,13 +283,25 @@ class _ArrowItem extends StatelessWidget {
             HugeIcon(icon: icon, color: Colors.grey[400]!, size: 22),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: TextStyle(fontSize: 13, color: Colors.grey[500]),
+                    ),
+                  ],
+                ],
               ),
             ),
             HugeIcon(

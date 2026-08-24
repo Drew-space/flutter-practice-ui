@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:practice_ui/apps/movieapp/movienavbar.dart';
-import 'package:practice_ui/apps/movieapp/pages/movie_home_screen.dart';
+import 'package:practice_ui/apps/movieapp/services/auth_service.dart';
 
-class MovieOnboarding extends StatelessWidget {
+class MovieOnboarding extends StatefulWidget {
   const MovieOnboarding({super.key});
 
+  @override
+  State<MovieOnboarding> createState() => _MovieOnboardingState();
+}
+
+class _MovieOnboardingState extends State<MovieOnboarding> {
   static const Color primaryPurple = Color(0xFF7a65c0);
+  final AuthService _authService = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isLoading = true);
+
+    final userCredential = await _authService.signInWithGoogle();
+
+    setState(() => _isLoading = false);
+
+    if (userCredential == null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sign in failed or cancelled')),
+      );
+    }
+    // AuthGate will auto-redirect to MovieNavbar on success
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +34,7 @@ class MovieOnboarding extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background image
-          Image.asset(
-            'assets/images/black panther.jpg', // change to your actual image filename
-            fit: BoxFit.cover,
-          ),
-
-          // Bottom gradient overlay
+          Image.asset('assets/images/black panther.jpg', fit: BoxFit.cover),
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -35,8 +50,6 @@ class MovieOnboarding extends StatelessWidget {
               ),
             ),
           ),
-
-          // Content
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -61,7 +74,7 @@ class MovieOnboarding extends StatelessWidget {
 
                   // Subtitle
                   Text(
-                    'stories unfold beyond the screen, movies into an immersive experience.',
+                    'Stories unfold beyond the screen, movies into an immersive experience.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.6),
@@ -73,35 +86,54 @@ class MovieOnboarding extends StatelessWidget {
 
                   const SizedBox(height: 32),
 
-                  // Get Started Button
+                  // Get Started Button (also signs in with Google)
+                  SizedBox(),
+
+                  const SizedBox(height: 12),
+
+                  // Sign in with Google Button
                   SizedBox(
                     width: double.infinity,
                     height: 56,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MovieNavbar(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryPurple,
-                        foregroundColor: Colors.white,
+                    child: OutlinedButton(
+                      onPressed: _isLoading ? null : _handleGoogleSignIn,
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
                         elevation: 0,
+                        side: const BorderSide(color: Colors.white, width: 1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: const Text(
-                        'Get Started',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.black54,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/google.png',
+                                  height: 24,
+                                  width: 24,
+                                ),
+                                const SizedBox(width: 12),
+                                const Text(
+                                  'Sign in with Google',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ],
+                            ),
                     ),
                   ),
 

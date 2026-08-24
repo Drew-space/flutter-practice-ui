@@ -1,0 +1,21 @@
+flutter_native_splash:
+  # Background color (dark theme for your movie app)
+  color: "#0A0A0A"
+  color_dark: "#0A0A0A"
+
+  # Your splash logo - place this image in assets/images/
+  image: assets/images/icon.png
+
+  # Android 12+ uses a different splash API
+  android_12:
+    image: assets/images/icon.png
+    icon_background_color: "#0A0A0A"
+    icon_background_color_dark: "#0A0A0A"
+
+  # Fullscreen (hides status bar on Android)
+  fullscreen: true
+
+  # Platforms
+  android: true
+  ios: true
+  web: false
