@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:practice_ui/apps/gadgetapp/models/gadget_models.dart';
 import 'package:practice_ui/apps/gadgetapp/utils/stepper_button.dart';
+import 'package:intl/intl.dart';
 
 /// Represents ONE product row inside the cart list.
 /// Shows: thumbnail image, product name, delete icon, price,
@@ -38,6 +39,10 @@ class CartItemTile extends StatelessWidget {
     // Calculate this item's line total: e.g. $50 × 3 = $150
     final lineTotal = product.price * quantity;
 
+    // A reusable formatter — "#,##0" means: use commas as thousand
+    // separators, and show no decimal places (matches your current
+    // .toStringAsFixed(0) style).
+    final formatter = NumberFormat('#,##0.00');
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -111,7 +116,7 @@ class CartItemTile extends StatelessWidget {
 
                 // Single unit price, e.g. "$50"
                 Text(
-                  '\$${product.price.toStringAsFixed(0)}',
+                  '\$${formatter.format(product.price)}',
                   style: TextStyle(fontSize: 13, color: Colors.grey[500]),
                 ),
                 const SizedBox(height: 8),
@@ -142,11 +147,11 @@ class CartItemTile extends StatelessWidget {
 
                     // Line total, e.g. "$150" (price × quantity)
                     Text(
-                      '\$${lineTotal.toStringAsFixed(0)}',
+                      '\$${formatter.format(lineTotal)}',
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFFEC7018),
+                        color: Colors.black,
                       ),
                     ),
                   ],

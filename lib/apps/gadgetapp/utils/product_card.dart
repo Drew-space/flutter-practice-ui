@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:practice_ui/apps/gadgetapp/models/gadget_models.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/product_detail_screen.dart';
 import 'package:practice_ui/apps/gadgetapp/provider/favourite_provider.dart';
+import 'package:intl/intl.dart';
 
 /// Reusable product card — used in the Flash Sales horizontal row,
 /// the Popular Products 2-column grid, and the Favourites screen.
@@ -23,7 +24,7 @@ class ProductCard extends ConsumerWidget {
     // Instead of the old fixed "product.isFavourite" field, we check
     // the LIVE state — is this product currently inside the Set?
     final isFavourite = favourites.contains(product);
-
+    final formatter = NumberFormat('#,##0.00');
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -153,7 +154,7 @@ class ProductCard extends ConsumerWidget {
             Row(
               children: [
                 Text(
-                  '\$${product.price.toStringAsFixed(2)}',
+                  '\$${formatter.format(product.price)}',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -162,7 +163,7 @@ class ProductCard extends ConsumerWidget {
                 if (product.originalPrice != null) ...[
                   const SizedBox(width: 6),
                   Text(
-                    '\$${product.originalPrice!.toStringAsFixed(2)}',
+                    '\$${formatter.format(product.originalPrice!)}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[400],

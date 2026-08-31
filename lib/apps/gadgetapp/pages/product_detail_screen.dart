@@ -5,6 +5,7 @@ import 'package:practice_ui/apps/gadgetapp/models/gadget_models.dart';
 import 'package:practice_ui/apps/gadgetapp/pages/gadget_shop_screen.dart';
 import 'package:practice_ui/apps/gadgetapp/provider/cart_provider.dart';
 import 'package:practice_ui/apps/gadgetapp/utils/cart_success_sheet.dart';
+import 'package:intl/intl.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
   final Gadget product;
@@ -49,6 +50,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   Widget build(BuildContext context) {
     final p = widget.product;
     final hasMultipleImages = _images.length > 1;
+    final formatter = NumberFormat('#,##0.00');
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -188,7 +190,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                           Row(
                             children: [
                               Text(
-                                '\$${p.price.toStringAsFixed(2)}',
+                                '\$${formatter.format(p.price)}',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,

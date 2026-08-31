@@ -27,7 +27,7 @@ const List<Gadget> allGadget = [
     subtitle: '256GB Natural Silver',
     rating: 4.6,
     reviewCount: 78,
-    price: 1119.00,
+    price: 1250.00,
     description:
         'The Apple M1 MacBook Pro delivers exceptional performance with '
         'Apple’s powerful M1 chip, offering blazing-fast speed, incredible '
@@ -35,7 +35,7 @@ const List<Gadget> allGadget = [
         'display, premium aluminum design, and advanced thermal efficiency, '
         'it is built for developers, creators, and professionals who need '
         'reliable performance for demanding workloads every day.',
-    originalPrice: 1250.00,
+    originalPrice: 2000.00,
     isFavourite: false,
     images: [
       "https://www.amaget.com/wp-content/uploads/2022/07/macbook.webp",
@@ -81,7 +81,7 @@ const List<Gadget> allGadget = [
     subtitle: 'Active Noise Cancellation',
     rating: 4.6,
     reviewCount: 78,
-    price: 249.00,
+    price: 249.36,
     imageUrl:
         'https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airpods-pro-3-hero-select-202509?wid=976&hei=916&fmt=jpeg&qlt=90&.v=cmp4MmZ6OWxOeHNNTXh4SzlBNUpEb1RucE9zZTI5eEREaWZpY29lSld3eWVDYXovZDMyN1dXU211bjZoVlVUcWJGcXNRQnFCV0w3WVRjTExvdm1ic1YxRUxFRmRlWDBITzhnRmZ5OTRmaVdKTExiOEFsRmxtQ2Nua0tRSC83MkI',
     isFavourite: false,
@@ -96,7 +96,7 @@ const List<Gadget> allGadget = [
     subtitle: 'Active Noise Cancellation',
     rating: 4.6,
     reviewCount: 78,
-    price: 549.00,
+    price: 549.70,
     imageUrl:
         "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airpods-max-compare-202409?wid=420&hei=500&fmt=jpeg&qlt=90&.v=MGJ3WGNoS1hJZng5ZTNiUkNNckE1WUNLYUZJYzNlb2M5YWlUSmxDUFM0VU1zMnAyYWJvaWNXR0hyZHB2dmJDMmdsbGZlRHV0Q3JlbHJxWXRlWjZpMnFLMWZobVVoS25GeGxET3FhTGFDUFE",
     isFavourite: false,
@@ -111,7 +111,7 @@ const List<Gadget> allGadget = [
     subtitle: '40hrs Battery life',
     rating: 4.6,
     reviewCount: 78,
-    price: 549.00,
+    price: 549.25,
     imageUrl:
         "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/watch-card-40-hermes-ultra-202603?wid=680&hei=528&fmt=p-jpg&qlt=95&.v=Ly93VWF6a1dGOWJLL3RMM0s0eGZ6dkxrL1JtTWVkTlZHZC94N3hJUktvSGZPOGdzbXFQKzNyOVN3L2NRSHJCNStFVlF6ZkRtZVJkbnBuR0wwNDgvSm1sYzVYYlU2dmpTclpCc0EvbDhhcVJKWTVCVjAxTmRTUFh4NVVLRDdSSEc",
     isFavourite: false,

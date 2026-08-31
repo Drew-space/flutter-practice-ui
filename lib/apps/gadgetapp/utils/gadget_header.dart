@@ -5,6 +5,20 @@ import 'package:practice_ui/apps/real-estate/utils/real_notificationIcon.dart';
 class GadgetHeader extends StatelessWidget {
   const GadgetHeader({super.key});
 
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+
+    if (hour < 12) {
+      return 'Good Morning';
+    } else if (hour < 17) {
+      return 'Good Afternoon';
+    } else if (hour < 21) {
+      return 'Good Evening';
+    } else {
+      return 'Good Night';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -15,9 +29,7 @@ class GadgetHeader extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundImage: NetworkImage(
-                "https://static.vecteezy.com/system/resources/thumbnails/044/245/716/small_2x/handsome-man-smiling-with-a-trendy-beard-and-hairstyle-png.png",
-              ),
+              backgroundImage: NetworkImage("https://i.pravatar.cc/300?img=12"),
             ),
 
             SizedBox(width: 10),
@@ -26,7 +38,7 @@ class GadgetHeader extends StatelessWidget {
 
               children: [
                 Text(
-                  "Good Morning",
+                  _getGreeting(),
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 Text(
