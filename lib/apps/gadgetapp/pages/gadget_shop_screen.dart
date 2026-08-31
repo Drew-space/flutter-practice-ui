@@ -1,607 +1,138 @@
-// import 'package:flutter/material.dart';
-// import 'package:practice_ui/apps/gadgetapp/utils/product.dart';
-
-// /// Pairs a Product with a quantity for the cart, without modifying
-// /// your existing Product model.
-// class CartItem {
-//   final Product product;
-//   int quantity;
-
-//   CartItem({required this.product, this.quantity = 1});
-
-//   double get lineTotal => product.price * quantity;
-// }
-
-// /// Cart screen BODY only — no AppBar (use your existing one).
-// /// Coupon code section intentionally excluded per request.
-// class GadgetShopScreen extends StatefulWidget {
-//   final List<CartItem> cartItems;
-//   final double shipping;
-
-//   const GadgetShopScreen({
-//     super.key,
-//     required this.cartItems,
-//     this.shipping = 75.0,
-//   });
-
-//   @override
-//   State<GadgetShopScreen> createState() => _GadgetShopScreenState();
-// }
-
-// class _GadgetShopScreenState extends State<GadgetShopScreen> {
-//   double get _subTotal =>
-//       widget.cartItems.fold(0.0, (sum, item) => sum + item.lineTotal);
-
-//   double get _total => _subTotal + widget.shipping;
-
-//   void _increment(CartItem item) {
-//     setState(() => item.quantity++);
-//   }
-
-//   void _decrement(CartItem item) {
-//     if (item.quantity <= 1) return;
-//     setState(() => item.quantity--);
-//   }
-
-//   void _remove(CartItem item) {
-//     setState(() => widget.cartItems.remove(item));
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 16),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           const SizedBox(height: 16),
-
-//           // ── CART ITEMS LIST ─────────────────────────────────
-//           Expanded(
-//             child: widget.cartItems.isEmpty
-//                 ? const Center(
-//                     child: Text(
-//                       'Your cart is empty',
-//                       style: TextStyle(color: Colors.grey),
-//                     ),
-//                   )
-//                 : ListView.separated(
-//                     itemCount: widget.cartItems.length,
-//                     separatorBuilder: (_, __) => const SizedBox(height: 12),
-//                     itemBuilder: (context, index) {
-//                       final item = widget.cartItems[index];
-//                       return _CartItemTile(
-//                         item: item,
-//                         onIncrement: () => _increment(item),
-//                         onDecrement: () => _decrement(item),
-//                         onRemove: () => _remove(item),
-//                       );
-//                     },
-//                   ),
-//           ),
-
-//           const SizedBox(height: 12),
-
-//           // ── SUMMARY ─────────────────────────────────────────
-//           _SummaryRow(label: 'Sub Total', value: _subTotal),
-//           const SizedBox(height: 8),
-//           _SummaryRow(label: 'Shipping', value: widget.shipping),
-//           const Padding(
-//             padding: EdgeInsets.symmetric(vertical: 10),
-//             child: Divider(height: 1, color: Color(0xFFEDEDED)),
-//           ),
-//           _SummaryRow(label: 'Total', value: _total, isTotal: true),
-
-//           const SizedBox(height: 16),
-
-//           // ── CHECKOUT BUTTON ─────────────────────────────────
-//           SizedBox(
-//             width: double.infinity,
-//             child: ElevatedButton(
-//               onPressed: widget.cartItems.isEmpty ? null : () {},
-//               style: ElevatedButton.styleFrom(
-//                 backgroundColor: const Color(0xFF5B5FE9),
-//                 padding: const EdgeInsets.symmetric(vertical: 16),
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(30),
-//                 ),
-//                 elevation: 0,
-//               ),
-//               child: const Text(
-//                 'Proceed to Checkout',
-//                 style: TextStyle(
-//                   color: Colors.white,
-//                   fontWeight: FontWeight.w600,
-//                   fontSize: 15,
-//                 ),
-//               ),
-//             ),
-//           ),
-
-//           const SizedBox(height: 16),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// // ============================================================
-// // CART ITEM TILE
-// // ============================================================
-
-// class _CartItemTile extends StatelessWidget {
-//   final CartItem item;
-//   final VoidCallback onIncrement;
-//   final VoidCallback onDecrement;
-//   final VoidCallback onRemove;
-
-//   const _CartItemTile({
-//     required this.item,
-//     required this.onIncrement,
-//     required this.onDecrement,
-//     required this.onRemove,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final p = item.product;
-
-//     return Container(
-//       padding: const EdgeInsets.all(12),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(14),
-//         border: Border.all(color: const Color(0xFFEDEDED)),
-//       ),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           // Thumbnail
-//           ClipRRect(
-//             borderRadius: BorderRadius.circular(10),
-//             child: SizedBox(
-//               width: 56,
-//               height: 56,
-//               child: Image.network(
-//                 p.imageUrl,
-//                 fit: BoxFit.cover,
-//                 errorBuilder: (_, __, ___) => Container(
-//                   color: const Color(0xFFF7F7F7),
-//                   child: const Icon(
-//                     Icons.broken_image_outlined,
-//                     color: Colors.grey,
-//                     size: 20,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),
-//           const SizedBox(width: 12),
-
-//           // Name, price, stepper
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Expanded(
-//                       child: Text(
-//                         p.name,
-//                         style: const TextStyle(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                         ),
-//                         maxLines: 1,
-//                         overflow: TextOverflow.ellipsis,
-//                       ),
-//                     ),
-//                     InkWell(
-//                       onTap: onRemove,
-//                       borderRadius: BorderRadius.circular(20),
-//                       child: const Padding(
-//                         padding: EdgeInsets.all(4),
-//                         child: Icon(
-//                           Icons.delete_outline_rounded,
-//                           size: 20,
-//                           color: Color(0xFFFF5A5F),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//                 const SizedBox(height: 2),
-//                 Text(
-//                   '\$${p.price.toStringAsFixed(0)}',
-//                   style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-//                 ),
-//                 const SizedBox(height: 8),
-//                 Row(
-//                   children: [
-//                     _StepperButton(icon: Icons.remove, onTap: onDecrement),
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 10),
-//                       child: Text(
-//                         '${item.quantity}',
-//                         style: const TextStyle(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                         ),
-//                       ),
-//                     ),
-//                     _StepperButton(icon: Icons.add, onTap: onIncrement),
-//                     const Spacer(),
-//                     Text(
-//                       '\$${item.lineTotal.toStringAsFixed(0)}',
-//                       style: const TextStyle(
-//                         fontSize: 15,
-//                         fontWeight: FontWeight.w700,
-//                         color: Color(0xFF5B5FE9),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class _StepperButton extends StatelessWidget {
-//   final IconData icon;
-//   final VoidCallback onTap;
-
-//   const _StepperButton({required this.icon, required this.onTap});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       onTap: onTap,
-//       borderRadius: BorderRadius.circular(6),
-//       child: Container(
-//         width: 22,
-//         height: 22,
-//         decoration: BoxDecoration(
-//           color: const Color(0xFF5B5FE9),
-//           borderRadius: BorderRadius.circular(6),
-//         ),
-//         child: Icon(icon, size: 14, color: Colors.white),
-//       ),
-//     );
-//   }
-// }
-
-// // ============================================================
-// // SUMMARY ROW (Sub Total / Shipping / Total)
-// // ============================================================
-
-// class _SummaryRow extends StatelessWidget {
-//   final String label;
-//   final double value;
-//   final bool isTotal;
-
-//   const _SummaryRow({
-//     required this.label,
-//     required this.value,
-//     this.isTotal = false,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final labelStyle = TextStyle(
-//       fontSize: isTotal ? 15 : 14,
-//       fontWeight: isTotal ? FontWeight.w600 : FontWeight.w400,
-//       color: isTotal ? Colors.black : Colors.grey[600],
-//     );
-//     final valueStyle = TextStyle(
-//       fontSize: isTotal ? 16 : 14,
-//       fontWeight: isTotal ? FontWeight.w700 : FontWeight.w600,
-//       color: Colors.black,
-//     );
-
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//       children: [
-//         Text(label, style: labelStyle),
-//         Text('\$${value.toStringAsFixed(0)}', style: valueStyle),
-//       ],
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
-import 'package:practice_ui/apps/gadgetapp/utils/cart_manager.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:practice_ui/apps/gadgetapp/provider/cart_provider.dart';
+import 'package:practice_ui/apps/gadgetapp/utils/cart_item_tile.dart';
 
-/// Cart screen BODY only — no AppBar (use your existing one).
-/// Coupon code section intentionally excluded per request.
+import 'package:practice_ui/apps/gadgetapp/utils/summary_row.dart';
+
+/// The main Cart screen. Shows AppBar ("Your Cart"), the list of
+/// items in the cart, a Total row, and a checkout button.
 ///
-/// Reads from the global CartManager rather than requiring cartItems
-/// to be passed in at construction, so this works as a plain
-/// zero-arg page inside GadgetNavbar's bottom-nav page list.
-class GadgetShopScreen extends StatelessWidget {
-  final double shipping;
-
-  const GadgetShopScreen({super.key, this.shipping = 75.0});
+/// This widget itself doesn't know HOW to build a single cart row
+/// (that's CartItemTile's job) — it just loops through the cart
+/// data and creates one CartItemTile per product.
+class GadgetShopScreen extends ConsumerWidget {
+  const GadgetShopScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<List<CartItem>>(
-      valueListenable: CartManager.items,
-      builder: (context, cartItems, _) {
-        final subTotal = cartItems.fold(
-          0.0,
-          (sum, item) => sum + item.lineTotal,
-        );
-        final total = subTotal + shipping;
+  // ConsumerWidget gives us "ref" — the tool we use to read/talk to
+  // our Riverpod providers (like CartNotifierProvider).
+  Widget build(BuildContext context, WidgetRef ref) {
+    // ref.watch() = "give me the cart data NOW, and rebuild this
+    // whole screen automatically whenever the cart changes."
+    // cart is a Map<Gadget, int> — Gadget = product, int = quantity.
+    final cart = ref.watch(CartNotifierProvider);
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
+    // A Map isn't directly loop-able with ListView, so we convert it
+    // to a List of "entries" — each entry.key = the Gadget,
+    // each entry.value = the quantity for that Gadget.
+    final cartEntries = cart.entries.toList();
 
-              // ── CART ITEMS LIST ─────────────────────────────
-              Expanded(
-                child: cartItems.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'Your cart is empty',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                    : ListView.separated(
-                        itemCount: cartItems.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final item = cartItems[index];
-                          return _CartItemTile(
-                            item: item,
-                            onIncrement: () => CartManager.increment(item),
-                            onDecrement: () => CartManager.decrement(item),
-                            onRemove: () => CartManager.remove(item),
-                          );
-                        },
-                      ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // ── SUMMARY ──────────────────────────────────────
-              _SummaryRow(label: 'Sub Total', value: subTotal),
-              const SizedBox(height: 8),
-              _SummaryRow(label: 'Shipping', value: shipping),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Divider(height: 1, color: Color(0xFFEDEDED)),
-              ),
-              _SummaryRow(label: 'Total', value: total, isTotal: true),
-
-              const SizedBox(height: 16),
-
-              // ── CHECKOUT BUTTON ──────────────────────────────
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: cartItems.isEmpty ? null : () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF5B5FE9),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Proceed to Checkout',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
+    // Add up (price × quantity) for every item to get the grand total.
+    final total = cartEntries.fold<double>(
+      0.0,
+      (sum, entry) => sum + (entry.key.price * entry.value),
     );
-  }
-}
 
-// ============================================================
-// CART ITEM TILE
-// ============================================================
-
-class _CartItemTile extends StatelessWidget {
-  final CartItem item;
-  final VoidCallback onIncrement;
-  final VoidCallback onDecrement;
-  final VoidCallback onRemove;
-
-  const _CartItemTile({
-    required this.item,
-    required this.onIncrement,
-    required this.onDecrement,
-    required this.onRemove,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final p = item.product;
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFEDEDED)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Thumbnail
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: SizedBox(
-              width: 56,
-              height: 56,
-              child: Image.network(
-                p.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: const Color(0xFFF7F7F7),
-                  child: const Icon(
-                    Icons.broken_image_outlined,
-                    color: Colors.grey,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Name, price, stepper
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        p.name,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: onRemove,
-                      borderRadius: BorderRadius.circular(20),
-                      child: const Padding(
-                        padding: EdgeInsets.all(4),
-
-                        child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedDelete02,
-                          size: 20,
-                          color: Color(0xFFFF5A5F),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '\$${p.price.toStringAsFixed(0)}',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    _StepperButton(icon: Icons.remove, onTap: onDecrement),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        '${item.quantity}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    _StepperButton(icon: Icons.add, onTap: onIncrement),
-                    const Spacer(),
-                    Text(
-                      '\$${item.lineTotal.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF5B5FE9),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StepperButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _StepperButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(6),
-      child: Container(
-        width: 22,
-        height: 22,
-        decoration: BoxDecoration(
-          color: const Color(0xFF5B5FE9),
-          borderRadius: BorderRadius.circular(6),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Your Cart',
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        child: Icon(icon, size: 14, color: Colors.white),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
       ),
-    );
-  }
-}
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
 
-// ============================================================
-// SUMMARY ROW (Sub Total / Shipping / Total)
-// ============================================================
+            // ── CART ITEMS LIST ─────────────────────────────
+            Expanded(
+              // If the cart has nothing in it, show "Your cart is empty"
+              // instead of an empty list.
+              child: cartEntries.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'Your cart is empty',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  : ListView.separated(
+                      itemCount: cartEntries.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        // Pick ONE (product, quantity) pair using index
+                        final entry = cartEntries[index];
+                        final product = entry.key;
+                        final quantity = entry.value;
 
-class _SummaryRow extends StatelessWidget {
-  final String label;
-  final double value;
-  final bool isTotal;
+                        // Build ONE row using our separate CartItemTile
+                        // widget, passing it the product + quantity +
+                        // what should happen on each button tap.
+                        return CartItemTile(
+                          product: product,
+                          quantity: quantity,
 
-  const _SummaryRow({
-    required this.label,
-    required this.value,
-    this.isTotal = false,
-  });
+                          // ref.read (not watch!) because we only want
+                          // to CALL a method here, not rebuild this
+                          // whole screen just from writing this line.
+                          onIncrement: () => ref
+                              .read(CartNotifierProvider.notifier)
+                              .addProduct(product),
+                          onDecrement: () => ref
+                              .read(CartNotifierProvider.notifier)
+                              .removeProduct(product),
+                          onRemove: () => ref
+                              .read(CartNotifierProvider.notifier)
+                              .deleteProduct(product),
+                        );
+                      },
+                    ),
+            ),
 
-  @override
-  Widget build(BuildContext context) {
-    final labelStyle = TextStyle(
-      fontSize: isTotal ? 15 : 14,
-      fontWeight: isTotal ? FontWeight.w600 : FontWeight.w400,
-      color: isTotal ? Colors.black : Colors.grey[600],
-    );
-    final valueStyle = TextStyle(
-      fontSize: isTotal ? 16 : 14,
-      fontWeight: isTotal ? FontWeight.w700 : FontWeight.w600,
-      color: Colors.black,
-    );
+            const SizedBox(height: 12),
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: labelStyle),
-        Text('\$${value.toStringAsFixed(0)}', style: valueStyle),
-      ],
+            // ── TOTAL ──────────────────────────────────────
+            SummaryRow(label: 'Total', value: total, isTotal: true),
+
+            const SizedBox(height: 16),
+
+            // ── CHECKOUT BUTTON ──────────────────────────────
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                // Disabled (greyed out, does nothing) if cart is empty
+                onPressed: cartEntries.isEmpty ? null : () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF5B5FE9),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Proceed to Checkout',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
     );
   }
 }

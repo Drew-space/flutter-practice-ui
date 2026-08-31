@@ -64,6 +64,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:practice_ui/apps/gadgetapp/gadget_navbar.dart';
 import 'package:practice_ui/firebase_options.dart';
 import 'package:practice_ui/apps/movieapp/movienavbar.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_onboarding.dart';
@@ -92,7 +93,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(scaffoldBackgroundColor: Colors.white),
-      home: const AuthGate(),
+      home: const GadgetNavbar(),
     );
   }
 }

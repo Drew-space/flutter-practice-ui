@@ -43,7 +43,7 @@ class CartSuccessSheet extends StatefulWidget {
 }
 
 class _CartSuccessSheetState extends State<CartSuccessSheet> {
-  static const _orange = Color(0xFFFF8A00);
+  static const _orange = Color(0xFF5B5FE9);
 
   @override
   Widget build(BuildContext context) {
