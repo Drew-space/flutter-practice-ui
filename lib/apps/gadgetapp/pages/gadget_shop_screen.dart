@@ -111,7 +111,7 @@ class GadgetShopScreen extends ConsumerWidget {
                 // Disabled (greyed out, does nothing) if cart is empty
                 onPressed: cartEntries.isEmpty ? null : () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5B5FE9),
+                  backgroundColor: const Color(0xFFEC7018),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),

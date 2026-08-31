@@ -13,7 +13,7 @@ import 'package:practice_ui/apps/gadgetapp/utils/stepper_button.dart';
 /// This makes it reusable and easy to test on its own.
 class CartItemTile extends StatelessWidget {
   final Gadget product; // the product being shown
-  final int quantity;   // how many of this product are in the cart
+  final int quantity; // how many of this product are in the cart
 
   // These three are "callback functions" — meaning THIS widget doesn't
   // decide what happens when you tap +, -, or delete. It just calls
@@ -146,7 +146,7 @@ class CartItemTile extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF5B5FE9),
+                        color: Color(0xFFEC7018),
                       ),
                     ),
                   ],

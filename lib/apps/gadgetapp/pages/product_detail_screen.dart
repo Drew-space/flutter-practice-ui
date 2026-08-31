@@ -287,7 +287,7 @@ class _BottomActionBar extends StatelessWidget {
                 onPressed: onAddToCart,
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: const BorderSide(color: Color(0xFF5B5FE9)),
+                  side: const BorderSide(color: Color(0xFFEC7018)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -297,14 +297,14 @@ class _BottomActionBar extends StatelessWidget {
                   children: [
                     HugeIcon(
                       icon: HugeIcons.strokeRoundedShoppingBag02,
-                      color: Color(0xFF5B5FE9),
+                      color: Color(0xFFEC7018),
                       size: 18,
                     ),
                     const SizedBox(width: 8),
                     const Text(
                       'Add to cart',
                       style: TextStyle(
-                        color: Color(0xFF5B5FE9),
+                        color: Color(0xFFEC7018),
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                       ),
@@ -318,7 +318,7 @@ class _BottomActionBar extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onBuyNow,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF5B5FE9),
+                  backgroundColor: Color(0xFFEC7018),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),

@@ -26,7 +26,7 @@ class StepperButton extends StatelessWidget {
         width: 22,
         height: 22,
         decoration: BoxDecoration(
-          color: const Color(0xFF5B5FE9), // purple-blue background
+          color: const Color(0xFFEC7018), // purple-blue background
           borderRadius: BorderRadius.circular(6),
         ),
         child: Icon(icon, size: 14, color: Colors.white),
