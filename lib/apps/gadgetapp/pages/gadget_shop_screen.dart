@@ -16,12 +16,12 @@ class GadgetShopScreen extends ConsumerWidget {
 
   @override
   // ConsumerWidget gives us "ref" — the tool we use to read/talk to
-  // our Riverpod providers (like CartNotifierProvider).
+  // our Riverpod providers (like cartNotifierProvider).
   Widget build(BuildContext context, WidgetRef ref) {
     // ref.watch() = "give me the cart data NOW, and rebuild this
     // whole screen automatically whenever the cart changes."
     // cart is a Map<Gadget, int> — Gadget = product, int = quantity.
-    final cart = ref.watch(CartNotifierProvider);
+    final cart = ref.watch(cartNotifierProvider);
 
     // A Map isn't directly loop-able with ListView, so we convert it
     // to a List of "entries" — each entry.key = the Gadget,
@@ -84,13 +84,13 @@ class GadgetShopScreen extends ConsumerWidget {
                           // to CALL a method here, not rebuild this
                           // whole screen just from writing this line.
                           onIncrement: () => ref
-                              .read(CartNotifierProvider.notifier)
+                              .read(cartNotifierProvider.notifier)
                               .addProduct(product),
                           onDecrement: () => ref
-                              .read(CartNotifierProvider.notifier)
+                              .read(cartNotifierProvider.notifier)
                               .removeProduct(product),
                           onRemove: () => ref
-                              .read(CartNotifierProvider.notifier)
+                              .read(cartNotifierProvider.notifier)
                               .deleteProduct(product),
                         );
                       },

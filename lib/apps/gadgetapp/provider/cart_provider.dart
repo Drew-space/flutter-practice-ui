@@ -17,7 +17,6 @@ class CartNotifier extends Notifier<Map<Gadget, int>> {
   void removeProduct(Gadget product) {
     final currentQty = state[product] ?? 0;
     if (currentQty <= 1) {
-      // Last one — remove the entry entirely
       final newState = {...state};
       newState.remove(product);
       state = newState;
@@ -27,14 +26,13 @@ class CartNotifier extends Notifier<Map<Gadget, int>> {
   }
 
   void deleteProduct(Gadget product) {
-    // Remove regardless of quantity
     final newState = {...state};
     newState.remove(product);
     state = newState;
   }
 }
 
-final CartNotifierProvider = NotifierProvider<CartNotifier, Map<Gadget, int>>(
+final cartNotifierProvider = NotifierProvider<CartNotifier, Map<Gadget, int>>(
   () {
     return CartNotifier();
   },

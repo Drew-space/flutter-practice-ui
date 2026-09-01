@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:practice_ui/apps/gadgetapp/provider/gadget_option_provider.dart';
 import 'package:practice_ui/apps/gadgetapp/provider/gadget_provider.dart';
 import 'package:practice_ui/apps/gadgetapp/utils/category_model.dart';
 import 'package:practice_ui/apps/gadgetapp/utils/countdown_badge.dart';
@@ -9,32 +10,6 @@ import 'package:practice_ui/apps/gadgetapp/utils/view_all_button.dart';
 
 // Changed from StatelessWidget -> ConsumerWidget so we can access "ref"
 class GadgetProducts extends ConsumerWidget {
-  final List<CategoryModel> options = [
-    CategoryModel(
-      name: "iPhone",
-      imageUrl: "https://i.ebayimg.com/images/g/668AAeSwTzto6q1i/s-l1600.webp",
-    ),
-    CategoryModel(
-      name: "Laptop",
-      imageUrl: "https://i.ebayimg.com/images/g/5VUAAeSwc-tppi6V/s-l1600.webp",
-    ),
-    CategoryModel(
-      name: "Watch",
-      imageUrl:
-          "https://www.apple.com/v/apple-watch-series-11/c/images/overview/contrast/contrast_s11__dkui1dgfuwcy_large_2x.png",
-    ),
-    CategoryModel(
-      name: "Airpod",
-      imageUrl:
-          "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airpods-4-select-202409_FV1?wid=976&hei=916&fmt=jpeg&qlt=90&.v=WnVKRVRUTFVsYThXaWkydWViL1Q3ZDZGTE9TV3RDcGJJclBqdUtzdTJYYjNHc3NlSmU2dzJyR1kxZEwyTE1neUJkRlpCNVhYU3AwTldRQldlSnpRa0NZZXAxWFNjRXhITDI1RVE5YVpyU0E",
-    ),
-    CategoryModel(
-      name: "Headset",
-      imageUrl:
-          "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/airpods-max-hero-select-202409?wid=976&hei=916&fmt=jpeg&qlt=90&.v=WXBZVEZCOUNiUWlBYUtjZmtBc0J2N1V1ZldxRmdZVjlvL2IxaEY3dzY3SG0ybW5TK3prTnlNTURRc1V2clYydHZvdUZlR0V0VUdJSjBWaDVNVG95YkJTUUExTVpiaXRIUnFOM1YxY0hPWFU",
-    ),
-  ];
-
   GadgetProducts({super.key});
 
   @override
@@ -45,7 +20,7 @@ class GadgetProducts extends ConsumerWidget {
     // ref.watch() means: "give me the list, AND rebuild this widget
     // automatically if the list ever changes in the future."
     final allGadgets = ref.watch(gadgetProvider);
-
+    final options = ref.watch(optionProvider);
     // We only have ONE list from the provider, but the UI needs TWO
     // sections (Flash Sales + Popular Products). So we just slice it.
     // Flash Sales = first 4 gadgets

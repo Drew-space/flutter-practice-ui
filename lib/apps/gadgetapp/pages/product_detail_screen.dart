@@ -33,7 +33,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   void _handleAddToCart() {
     // ref.read(...notifier) = "call a method", not "watch for changes"
-    ref.read(CartNotifierProvider.notifier).addProduct(widget.product);
+    ref.read(cartNotifierProvider.notifier).addProduct(widget.product);
 
     CartSuccessSheet.show(
       context,
