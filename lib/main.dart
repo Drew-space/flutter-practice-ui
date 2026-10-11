@@ -65,10 +65,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:practice_ui/apps/gadgetapp/gadget_navbar.dart';
+import 'package:practice_ui/apps/note/note_home%20screen.dart';
 import 'package:practice_ui/firebase_options.dart';
 import 'package:practice_ui/apps/movieapp/movienavbar.dart';
 import 'package:practice_ui/apps/movieapp/pages/movie_onboarding.dart';
 import 'package:practice_ui/apps/movieapp/services/auth_service.dart';
+import 'package:practice_ui/apps/video_comment_sheet_demo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,7 +95,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(scaffoldBackgroundColor: Colors.white),
-      home: const GadgetNavbar(),
+      home: const VideoCommentSheetDemo(),
     );
   }
 }

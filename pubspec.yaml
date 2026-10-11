@@ -38,7 +38,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   iconsax: ^0.0.8
-  intl: ^0.20.3
+  # intl: ^0.19.0
   video_player: 2.11.1
   http: ^1.6.0
   chewie: ^1.15.0
@@ -55,6 +55,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   mapbox_maps_flutter: ^2.29.1
+  flutter_quill: ^10.0.0
 
 dev_dependencies:
   flutter_test:
